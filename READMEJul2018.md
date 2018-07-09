@@ -19,7 +19,11 @@ Instructions:
 •	Upload this finished project to GitHub   
 •	Publish this project and database in Azure and publish   
    
+Entity Framework data model diagram:   
+![](https://github.com/Z-Zhao/OnBoardingTask2018Jun/raw/master/Data%20Model%20Diagram.jpg)
+   
 Technical summary:   
+Note: X - technic used  
 <table>
    <thead>
       <tr> <th >Name:</th> <th >Product</th><th >Customer</th><th >Store</th><th >Sale</th> </tr>
@@ -37,9 +41,6 @@ Technical summary:
       <tr> <th >AJAX/Json</th>       <th > </th><th > </th><th >X</th><th >X</th> </tr>
       <tr> <th >Knockout</th>        <th > </th><th > </th><th > </th><th >X</th> </tr>
    </tbody>
-   <tfoot>
-      Note: X - technic used
-   </tfoot>
 </table>   
    
 Herb Z Zhao   
