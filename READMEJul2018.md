@@ -20,36 +20,27 @@ Instructions:
 •	Publish this project and database in Azure and publish   
    
 Technical summary:   
-Note: X - technic used   
-           | Name:|Product|Customer| Store | Sale |
-           | ---: |-----: |------: |-----: |----: |
-         | ASP.NET|   X   |    X   |   X   |  X   |
-             | MVC|   X   |    X   |   X   |  X   |
-            | MVVM|       |        |       |  X   |
-| Entity Framework|   X   |    X   |   X   |  X   |
- | Data annotation|   X   |    X   |   X   |  X   |
-            | CRUD|   X   |    X   |   X   |  X   |
-       | Bootstrap|       |    X   |   X   |  X   |
-         | JScript|       |    X   |   X   |  X   |
-          | jQuery|       |    X   |   X   |  X   |
-| @Model pass data|   X   |    X   |       |      |
-       | AJAX/Json|       |        |   X   |  X   |
-        | Knockout|       |        |       |  X   |
-   
-           Name:|Product|Customer| Store | Sale   
-           -----------------------------------   
-         ASP.NET|   X   |    X   |   X   |  X   
-             MVC|   X   |    X   |   X   |  X   
-            MVVM|       |        |       |  X   
-Entity Framework|   X   |    X   |   X   |  X   
- Data annotation|   X   |    X   |   X   |  X   
-            CRUD|   X   |    X   |   X   |  X   
-       Bootstrap|       |    X   |   X   |  X   
-         JScript|       |    X   |   X   |  X   
-          jQuery|       |    X   |   X   |  X   
-@Model pass data|   X   |    X   |       |      
-       AJAX/Json|       |        |   X   |  X   
-        Knockout|       |        |       |  X   
+<table>
+   <thead>
+      <tr> <th >Name:</th> <th >Product</th><th >Customer</th><th >Store</th><th >Sale</th> </tr>
+   </thead>
+   <tbody>
+      <tr> <th >ASP.NET MVC</th>     <th >X</th><th >X</th><th >X</th><th >X</th> </tr>
+      <tr> <th >MVVM</th>            <th > </th><th > </th><th > </th><th >X</th> </tr>
+      <tr> <th >Entity Framework</th><th >X</th><th >X</th><th >X</th><th >X</th> </tr>
+      <tr> <th >Data annotation</th> <th >X</th><th >X</th><th >X</th><th >X</th> </tr>
+      <tr> <th >CRUD</th>            <th >X</th><th >X</th><th >X</th><th >X</th> </tr>
+      <tr> <th >Bootstrap</th>       <th > </th><th >X</th><th >X</th><th >X</th> </tr>
+      <tr> <th >JavaScript</th>         <th > </th><th >X</th><th >X</th><th >X</th> </tr>
+      <tr> <th >jQuery</th>          <th > </th><th >X</th><th >X</th><th >X</th> </tr>
+      <tr> <th >@Model pass data</th><th >X</th><th >X</th><th > </th><th > </th> </tr>
+      <tr> <th >AJAX/Json</th>       <th > </th><th > </th><th >X</th><th >X</th> </tr>
+      <tr> <th >Knockout</th>        <th > </th><th > </th><th > </th><th >X</th> </tr>
+   </tbody>
+   <tfoot>
+      Note: X - technic used
+   </tfoot>
+</table>   
    
 Herb Z Zhao   
 9-Jul-2018   
