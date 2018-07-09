@@ -1,46 +1,50 @@
-﻿@model OnBoardingTask2018Jun.Models.New_Models.Store
+﻿<div class="modal fade" id="CreateModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Store</h3>
+            </div>
+            <div class="modal-body">
+                @*Rewrite all Html.helper which contain lamda expressions like (modal=>modal.Name), to avoid default asp.net mvc data transfer*@
+                @*data transfer method is Ajax*@
+                <form id="CreateForm">
+                    @Html.AntiForgeryToken()
 
-@{
-    ViewBag.Title = "Create";
-}
+                    <div class="form-horizontal">
+                        <hr />
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="Name">Name</label>
+                            <div class="col-md-10">
+                                <input id="CreateName" name="Name" type="text" value="" class="input-validation-error form-control text-box single-line" data-val="true" data-val-required="The Name field is required." />
+                                <span id="CreateNameValidMsg" class="field-validation-error text-danger" data-valmsg-for="Name" data-valmsg-replace="true">test result</span>
+                            </div>
+                        </div>
 
-<h2>Create</h2>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="Address">Address</label>
+                            <div class="col-md-10">
+                                <input id="CreateAddress" name="Address" type="text" value="" class="form-control text-box single-line" data-val-required="" />
+                                <span id="CreateAddrValidMsg" class="field-validation-valid text-danger" data-valmsg-for="Address" data-valmsg-replace="true">test result</span>
+                            </div>
+                        </div>
 
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <h4>Store</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Create" class="btn btn-default" />
-            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <a id="CreateSave" class="btn btn-default">Create</a>
+                                <a class="btn btn-default" data-dismiss="modal">Back to List</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div><!--/modal body-->
+            <div class="modal-footer"></div>
         </div>
     </div>
 </div>
-}
-
-
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+    @*These scripts do not include in Index page when using RenderPartial("Create")*@
+    @*@Scripts.Render("~/bundles/jqueryval")*@
+    <script>
+        $('#CreateModal').modal();
+    </script>
 }

@@ -1,0 +1,86 @@
+﻿@{
+    Layout = null;
+}
+<!--Test page for ko data binding
+    to set the default option when initialize a dropdown list-->
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+       
+    </style>
+</head>
+<body>
+    <div>
+        <p> Product List Option</p>
+        <p>
+            <button id="AjaxBtn">Ajax</button>
+        </p>
+        <select data-bind="options: ProductList, optionsText: 'Name', optionsValue: 'Id', value: selectedItem"></select>
+
+        <div data-bind="text: selectedItem"></div>
+    </div>
+</body>
+</html>
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="/Scripts/knockout-3.4.2.js"></script>
+<script src="/Scripts/knockout.validation.js"></script>
+
+<script>
+    function ProductItem(item) {
+        this.Id = ko.observable(item.Id);
+        this.Name = ko.observable(item.Name);
+        this.Price = ko.observable(item.Price)
+    }
+
+    function viewModelfunction() {
+        //selectedItem: ko.observable(3),
+
+        ////if canceled, Unable to process binding "options: function(){return ProductList }" Message: ProductList is not defined
+        //// ProductList: ko.observableArray([new ProductItem(3, "aa", "")])
+        //ProductList: ko.observableArray([new ProductItem({ "Id": 3, "Name": "aa", "Price": "" })])
+
+        this.selectedItem = ko.observable();
+        this.ProductList = ko.observableArray([]);
+    };
+
+    viewModel = new viewModelfunction();
+    ko.applyBindings(viewModel);
+    
+    $('#AjaxBtn').click(function () {
+        $.ajax({
+            url: "/Sales/Edit/" + 2,
+            type: "get",
+            datatype: "json",
+            success: function (receiveEditData) {
+                
+                var ProductKoList = [];
+                for (var i = 0; i < receiveEditData.ProductList.length; i++) {
+                    ProductKoList.push(new ProductItem(receiveEditData.ProductList[i]));
+                }
+
+
+                
+
+                viewModel.ProductList(ProductKoList);
+                viewModel.selectedItem(receiveEditData.ProductId);
+                
+            },
+            error: function () {
+                alert("Edit Get Request Failed");
+            }
+        })
+    });
+
+
+
+</script>
+
+
+
+

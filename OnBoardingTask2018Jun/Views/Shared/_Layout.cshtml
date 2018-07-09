@@ -6,6 +6,7 @@
     <title>@ViewBag.Title - Herb's Onboarding Task</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery") @*Add jquery in the beginning*@
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -29,13 +30,14 @@
         </div>
     </div>
     <div class="container body-content">
+        @*RenderBody*@ 
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - My MVP Studio Onboarding Task Project - ASP.NET Application - Herb Zongxi Zhao</p>
         </footer>
     </div>
-    @Scripts.Render("~/bundles/jquery")
+
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>

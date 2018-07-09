@@ -15,30 +15,26 @@ namespace OnBoardingTask2018Jun.Controllers
     {
         private CustomChangedEntities db = new CustomChangedEntities();
 
-        // GET: Stores
+        // GET: Stores/Index (View)
         public ActionResult Index()
         {
             return View(db.Stores.ToList());
         }
 
-        // GET: Stores/Details/5
-        public ActionResult Details(int? id)
+        // GET: Stores/IndexTable (data of table on index page)
+        public ActionResult IndexTable()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Store store = db.Stores.Find(id);
-            if (store == null)
-            {
-                return HttpNotFound();
-            }
-            return View(store);
-        }
+            // sellect only needed property (get rid of Sold, etc.), to avoid circle reference when serialization
+            var StoreIdNameAddress = db.Stores.ToList().Select(item => new { item.Id, item.Name, item.Address });
 
+            // if not set JsonRequestBehavior.AllowGet, request will be blocked...
+            // because sensitive information could be disclosed to third party web sites when this is used in a GET request.
+            return Json(StoreIdNameAddress.ToList(), JsonRequestBehavior.AllowGet);
+        }
+        
         // GET: Stores/Create
         public ActionResult Create()
-        {
+        { // no use in this case
             return View();
         }
 
@@ -50,13 +46,15 @@ namespace OnBoardingTask2018Jun.Controllers
         public ActionResult Create([Bind(Include = "Id,Name,Address")] Store store)
         {
             if (ModelState.IsValid)
-            {
+            { // data is valid
                 db.Stores.Add(store);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return Json(new { Store = new { store.Id, store.Name, store.Address }, DataValid = true }, JsonRequestBehavior.AllowGet);
             }
-
-            return View(store);
+            else
+            { // data is not valid
+                return Json(new { Store = new { store.Id, store.Name, store.Address }, DataValid = false }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // GET: Stores/Edit/5
@@ -71,7 +69,11 @@ namespace OnBoardingTask2018Jun.Controllers
             {
                 return HttpNotFound();
             }
-            return View(store);
+            
+            // return only property which frontend needed, aviod ProductSolds,
+            // otherwise it will cause circle reference
+            return Json(new { store.Id,store.Name,store.Address }, JsonRequestBehavior.AllowGet);
+            //return View(store); // return value to edit page (or edit modal)
         }
 
         // POST: Stores/Edit/5
@@ -85,12 +87,21 @@ namespace OnBoardingTask2018Jun.Controllers
             {
                 db.Entry(store).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return Json(new { Store = new { store.Id, store.Name, store.Address }, DataValid = true }, JsonRequestBehavior.AllowGet);
+                //return RedirectToAction("Index");
             }
-            return View(store);
+            else // data is not valid
+            {
+                // return only property which frontend needed, aviod ProductSolds,
+                // otherwise it will cause circle reference
+                return Json(new { Store= new { store.Id,store.Name,store.Address },DataValid=false }, JsonRequestBehavior.AllowGet);
+                //return View(store); // return this not valid data to original edit view
+            }
+            
         }
 
         // GET: Stores/Delete/5
+        [HttpGet]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -102,7 +113,8 @@ namespace OnBoardingTask2018Jun.Controllers
             {
                 return HttpNotFound();
             }
-            return View(store);
+            return Json(new { store.Id, store.Name, store.Address }, JsonRequestBehavior.AllowGet);
+            //View(store);
         }
 
         // POST: Stores/Delete/5
@@ -113,7 +125,7 @@ namespace OnBoardingTask2018Jun.Controllers
             Store store = db.Stores.Find(id);
             db.Stores.Remove(store);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return Json(new { Success=true }); // return success info to ajax post
         }
 
         protected override void Dispose(bool disposing)

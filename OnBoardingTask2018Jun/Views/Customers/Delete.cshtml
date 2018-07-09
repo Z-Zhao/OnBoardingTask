@@ -1,40 +1,49 @@
 ﻿@model OnBoardingTask2018Jun.Models.New_Models.Customer
 
-@{
-    ViewBag.Title = "Delete";
-}
+<div class="modal fade" id="DeleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h3>Delete</h3>
+            </div>
+            <div class="modal-body">
+                <h3>Are you sure you want to delete this?</h3>
+                <div>
+                    <h4>Customer</h4>
+                    
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
 
-<h2>Delete</h2>
+                        <dd id="NameForDelete">
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Customer</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Address)
+                        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+                        <dd id="AddressForDelete">
+                            @Html.DisplayFor(model => model.Address)
+                        </dd>
+                    </dl>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
 
-        <dd>
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-
-    </dl>
-
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+                        <div class="form-actions no-color">
+                            <input type="submit" value="Delete" class="btn btn-default" />
+                            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer"></div>
         </div>
-    }
+    </div>
 </div>

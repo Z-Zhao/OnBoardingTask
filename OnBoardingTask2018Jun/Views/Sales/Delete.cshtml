@@ -1,56 +1,47 @@
-﻿@model OnBoardingTask2018Jun.Models.New_Models.ProductSold
+﻿<div class="modal fade" id="DeleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h3>Delete</h3>
+            </div>
+            <div class="modal-body">
+                <h3>Are you sure you want to delete this?</h3>
+                <div>
+                    <h4>ProductSold</h4>
+                    <hr />
+                    <dl class="dl-horizontal" data-bind="with: DeleteData"> @*data-bind with: binding object DeleteData*@
+                        <dt>Date Sold</dt>      <dd data-bind="text: DateSold"></dd> @*DeleteData.DateSold*@
 
-@{
-    ViewBag.Title = "Delete";
-}
+                        <dt>Customer Name</dt>  <dd data-bind="text: CustomerName"></dd>
 
-<h2>Delete</h2>
+                        <dt>Product Name</dt>   <dd data-bind="text: ProductName"></dd>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>ProductSold</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.DateSold)
-        </dt>
+                        <dt>Store Name</dt>     <dd data-bind="text: StoreName"></dd>
+                    </dl>
 
-        <dd>
-            @Html.DisplayFor(model => model.DateSold)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Customer.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Customer.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Product.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Product.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Store.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Store.Name)
-        </dd>
-
-    </dl>
-
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <input value="" id="DeleteId" name="Id" type="hidden" />
+                        <div class="form-actions no-color">
+                            <a id="DeleteSave" class="btn btn-default">Delete</a>
+                            <a class="btn btn-default" data-dismiss="modal" aria-hidden="true">Back to List</a>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer"></div>
+            </div>
         </div>
-    }
+    </div>
 </div>
+
+@section Scripts
+{@*Scripts will not be load to Index page using PartialView*@
+<script>
+        $('#DeleteModal').modal({ backdrop: 'static' });
+
+</script>
+}

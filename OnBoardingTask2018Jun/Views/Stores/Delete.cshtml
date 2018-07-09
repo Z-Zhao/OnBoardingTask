@@ -1,40 +1,49 @@
-﻿@model OnBoardingTask2018Jun.Models.New_Models.Store
+﻿<div class="modal fade" id="DeleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h3>Delete</h3>
+            </div>
+            <div class="modal-body">
+                <h3>Are you sure you want to delete this?</h3>
+                <div>
+                    <h4>Store</h4>
 
-@{
-    ViewBag.Title = "Delete";
-}
+                    <dl class="dl-horizontal" id="DisplayDeleteData">
+                        <!--Insert html from Ajax on Index-->
+                        @*<dt>Name</dt>
+            <dd id="DeleteNameContext">@Modal.Name</dd>
+            <dt>Address</dt>
+            <dd id="DeleteAddressContext">@Modal.Address</dd>*@
+                    </dl>
 
-<h2>Delete</h2>
+                    <form id="DeleteForm">
+                        @Html.AntiForgeryToken()
+                        <input value="" id="DeleteId" name="Id" type="hidden" />
+                        <div class="form-actions no-color">
+                            <a id="DeleteSave" class="btn btn-default">Delete</a>
+                            <a class="btn btn-default" data-dismiss="modal" aria-hidden="true">Back to List</a>
+                        </div>
+                    </form>
+                    
+                
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Store</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-
-    </dl>
-
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            @Html.ActionLink("Back to List", "Index")
+                    
+                </div>
+            </div>
+            <div class="modal-footer"></div>
         </div>
-    }
+    </div>
 </div>
+
+
+@section Scripts
+{@*Scripts will not be load to Index page using PartialView*@
+    <script>
+        $('#DeleteModal').modal({ backdrop: 'static' });
+        
+    </script>
+}

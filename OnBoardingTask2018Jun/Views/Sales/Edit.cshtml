@@ -1,66 +1,77 @@
-﻿@model OnBoardingTask2018Jun.Models.New_Models.ProductSold
+﻿@*@model OnBoardingTask2018Jun.Models.New_Models.ProductSold*@
 
-@{
-    ViewBag.Title = "Edit";
-}
-
-<h2>Edit</h2>
-
-
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>ProductSold</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ProductId, "ProductId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ProductId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ProductId, "", new { @class = "text-danger" })
+<div class="modal fade" id="EditModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h3>Sale</h3>
             </div>
-        </div>
+            <div class="modal-body">
+                <form id="EditForm">
+                    @Html.AntiForgeryToken()
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.CustomerId, "CustomerId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("CustomerId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-horizontal">
+                        <div class="validation-summary-errors text-danger"><ul><li style="display:none"></li></ul></div> @*ValidationSummary*@
+                        <!--data-bind: value=self.SoldId-->
+                        <input data-bind="value:SoldId" id="EditId" data-val="true" data-val-number="The field Id must be a number." data-val-required="The Id field is required." name="Id" type="hidden" /> @*HiddenFor(model => model.Id)*@
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.StoreId, "StoreId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("StoreId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="CustomerId">Customer Name</label>
+                            <div class="col-md-10">
+                                <select data-bind="options: CustomerList, value: SelectedCustomerId, optionsText: 'Name', optionsValue: 'Id'" class="form-control" id="CustomerId" name="CustomerId"></select>
+                                @*@Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })*@
+                            </div>
+                        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.DateSold, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DateSold, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DateSold, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="ProductId">Product Name</label>
+                            <div class="col-md-10">
+                                <!--value: must be int, & optionsValue must exist and be set to Id, otherwise initial dropdown value will not change-->
+                                <!--data-bind: options=self.ProductList, value=self.SelectedProductId, optionsText=ProductList.Name, optionsValue=ProductList.Id-->
+                                <select data-bind="options: ProductList, value: SelectedProductId, optionsText: 'Name', optionsValue: 'Id'" class="form-control" id="ProductId" name="ProductId"> </select>
+                                @*@Html.ValidationMessageFor(model => model.ProductId, "", new { @class = "text-danger" })*@
+                            </div>
+                        </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="StoreId">Store Name</label>
+                            <div class="col-md-10">
+                                <select data-bind="options: StoreList, value: SelectedStoreId, optionsText: 'Name', optionsValue: 'Id'" class="form-control" id="StoreId" name="StoreId"></select>
+                                @*@Html.ValidationMessageFor(model => model.StoreId, "", new { @class = "text-danger" })*@
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="DateSold">Date</label>
+                            <div class="col-md-10">
+                                @*displayed date format will be chosen based on the set locale of the user's browser, whereas the <input> date value is always formatted "yyyy-mm-dd"*@
+                                <input data-bind="value:SoldDate, validationElement:SoldDate" type="date" class="form-control text-box single-line" id="DateSold" name="DateSold" />
+                                <span data-bind="validationMessage:SoldDate" class="text-danger"></span> <!--Knockout validation, SoldDate can not be a future date (bigger than today).-->
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <a id="EditSave" class="btn btn-default">Save</a>
+                                @*@Html.ActionLink("Back to List", "Index")*@
+                                <a class="btn btn-default" data-dismiss="modal">Back to List</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div> <!--/modal-body-->
+            <div class="modal-footer"></div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script>
+        $('#EditModal').modal();
+</script>
 }

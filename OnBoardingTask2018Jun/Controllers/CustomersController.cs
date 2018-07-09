@@ -11,6 +11,7 @@ using OnBoardingTask2018Jun.Models.New_Models;
 
 namespace OnBoardingTask2018Jun.Controllers
 {
+    // enum ActionStates is in Model - New Model - ActionStates.cs
     public class CustomersController : Controller
     {
         private CustomChangedEntities db = new CustomChangedEntities();
@@ -18,35 +19,30 @@ namespace OnBoardingTask2018Jun.Controllers
         // GET: Customers
         public ActionResult Index()
         {
-            return View(db.Customers.ToList());
-        }
+            CustomerControllerViewDataTransferModel ReturnToIndex = new CustomerControllerViewDataTransferModel();
+            ReturnToIndex.DbCustomerSet = db.Customers.ToList();
+            ReturnToIndex.ActionState = (int)ActionStates.IndexGet;
+            ReturnToIndex.TransferExtraCustomer = null;
 
-        // GET: Customers/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
-            {
-                return HttpNotFound();
-            }
-            return View(customer);
+            return View("Index",ReturnToIndex);
         }
 
         // GET: Customers/Create
         public ActionResult Create()
         {
-            return View();
+            CustomerControllerViewDataTransferModel ReturnToIndex = new CustomerControllerViewDataTransferModel();
+            ReturnToIndex.DbCustomerSet = db.Customers.ToList();
+            ReturnToIndex.ActionState = (int)ActionStates.CreateGet;
+            ReturnToIndex.TransferExtraCustomer = new Customer { Name = "", Address = "" };
+
+            return View("Index", ReturnToIndex);
         }
 
         // POST: Customers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken] // Avoid CSRF: Cross Site Request Forgery
         public ActionResult Create([Bind(Include = "Id,Name,Address")] Customer customer)
         {
             if (ModelState.IsValid)
@@ -55,8 +51,24 @@ namespace OnBoardingTask2018Jun.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            else
+            {
+                // return to view Index, data is combined with...
+                // original data db.Customers, and item "customer"...
+                // i.e., the new inputed one().
+                // because the new inputed item is not valid, give this item a special ID = -1
+                // customer.Id = -1;
 
-            return View(customer);
+                CustomerControllerViewDataTransferModel ReturnToIndex = new CustomerControllerViewDataTransferModel();
+                ReturnToIndex.DbCustomerSet = db.Customers.ToList();
+                ReturnToIndex.ActionState = (int)ActionStates.CreateInputInvalid;
+                ReturnToIndex.TransferExtraCustomer = customer;
+                return View("Index", ReturnToIndex);
+
+                // After receive this ReturnToIndex, the Index.cshtml will proceess this variable,... 
+                // according to .TransferExtraCustomer & .ActionState, copy ExtraCustomer to partial view:...
+                // Create page, then list .DbCustomerSet items in the table on Index page
+            }
         }
 
         // GET: Customers/Edit/5
@@ -71,7 +83,25 @@ namespace OnBoardingTask2018Jun.Controllers
             {
                 return HttpNotFound();
             }
-            return View(customer);
+            else
+            {
+                CustomerControllerViewDataTransferModel ReturnToIndex = new CustomerControllerViewDataTransferModel();
+                ReturnToIndex.DbCustomerSet = db.Customers.ToList();
+                ReturnToIndex.ActionState = (int)ActionStates.EditGet;
+                ReturnToIndex.TransferExtraCustomer = customer;
+
+                return View("Index", ReturnToIndex);
+
+                // Compare different View methods:
+                // (1)when using $("#EditModal").modal() to open modal, return to View("Index").
+                // when using data-target=... data-toggle=.. it is not good, because the View(Index) will show up on modal webpage
+
+                // (2) return View(customer); wrong, because it equals to View("Edit",customer)- "Edit" is not a correct url
+
+                // (3) when using data-target=... data-toggle=.. it is good, because the correct View(Edit/id) will show up on modal webpage
+                // but data transfer to the "Edit.cshtml", not the index page. Thus the textbox in modal is empty.
+                // return View("Edit/"+ OldId, customer); // OK, but data not return to the Index page
+            }
         }
 
         // POST: Customers/Edit/5
@@ -87,7 +117,15 @@ namespace OnBoardingTask2018Jun.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(customer);
+            else
+            {
+                CustomerControllerViewDataTransferModel ReturnToIndex = new CustomerControllerViewDataTransferModel();
+                ReturnToIndex.DbCustomerSet = db.Customers.ToList();
+                ReturnToIndex.ActionState = (int)ActionStates.EditInputInvalid;
+                ReturnToIndex.TransferExtraCustomer = customer;
+
+                return View("Index", ReturnToIndex);
+            }
         }
 
         // GET: Customers/Delete/5
@@ -97,12 +135,24 @@ namespace OnBoardingTask2018Jun.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
+            else
             {
-                return HttpNotFound();
+                Customer customer = db.Customers.Find(id);
+                if (customer == null)
+                {
+                    return HttpNotFound();
+                }
+                else
+                {
+                    CustomerControllerViewDataTransferModel ReturnToIndex = new CustomerControllerViewDataTransferModel();
+                    ReturnToIndex.DbCustomerSet = db.Customers.ToList();
+                    ReturnToIndex.ActionState = (int)ActionStates.DeleteGet;
+                    ReturnToIndex.TransferExtraCustomer = customer;
+
+                    // different ways of View V.S. Openning Modal analysis: see comment in GET: Customers/Edit/5
+                    return View("Index", ReturnToIndex);
+                }
             }
-            return View(customer);
         }
 
         // POST: Customers/Delete/5

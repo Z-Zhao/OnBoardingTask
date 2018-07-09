@@ -1,46 +1,50 @@
 ﻿@model OnBoardingTask2018Jun.Models.New_Models.Customer
 
-@{
-    ViewBag.Title = "Create";
-}
+@*@{
+        ViewBag.Title = "Create";
+    }*@
 
-<a class="btn btn-default"data-toggle="modal" data-target=".bootstrapmodal">View</a>
+@*<a class="btn btn-default"data-toggle="modal" data-target="#CreatModal" data-backdrop="static">View</a>*@
 
-<div class="modal fade bootstrapmodal">
+<div class="modal fade" id="CreateModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Create Customer</h2>
+                <h3>Create Customer</h3>
             </div>
             <div class="modal-body">
-                @using (Html.BeginForm())
+                @using (Html.BeginForm("Create", "Customers"))
                 {
                     @Html.AntiForgeryToken()
-                <div class="form-horizontal">
-                    <hr />
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
 
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                    <div class="form-horizontal">
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <!--Button: Creat-->
+                                <!--when click this input type="submit", it will send form type data by Html.BeginForm()-->
+                                <input type="submit" value="Create" class="btn btn-default" />
+                                <!--Button: Back to List-->
+                                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <input type="submit" value="Create" class="btn btn-default" />
-                            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
-                        </div>
-                    </div>
-                </div>
                 }
             </div>
             <div class="modal-footer"></div>
@@ -49,6 +53,6 @@
 </div>
 
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+@*@section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }*@

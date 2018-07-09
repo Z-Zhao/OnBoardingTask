@@ -1,4 +1,16 @@
-﻿@model IEnumerable<OnBoardingTask2018Jun.Models.New_Models.Customer>
+﻿@model OnBoardingTask2018Jun.Models.New_Models.CustomerControllerViewDataTransferModel
+@* this model pass data from Controller to View, through Model CustomerControllerViewDataTransferModel which includes:
+    1. DbCustomerSet - for Index page listing all customer items
+    2. TransferExtraCustomer - used as input data for modal pages when using HTML.RenderPartial(),...
+        can be an Initial value for each Modal page (Edit, Create, Delete),...
+        or get data return from controller (because of invalid input)
+    3. Edit([Bind(Include = "Id,Name,Address")] Customer customer) - when this ...
+        method receive a invalid Edit Form input (customer), it return {db.Customer, customer}
+*@
+@*In this Customers SPA, I try to use default ASP.NET MVC data trasfer method rather than AJAX/Json*@
+@* This data passing method need transfer whole webpage every time, thus it is much heavier than AJAX/JSON.
+   Herb Zhao, 24/06/2018
+*@
 
 @{
     ViewBag.Title = "Index";
@@ -6,48 +18,166 @@
 
 <h2>Customer Details</h2>
 
+<!--"Add New Customer" Action Link: Click this to call a #CreatModal pop up webpage and call the Creat Controller-->
 <p>
-    @Html.ActionLink("Add New Customer", "Create", null, new { @class = "btn btn-primary" })
+    <a href=@Url.Action("Create", "Customers") class="btn btn-primary">Add New Customer</a>
 </p>
+
+<!--Index Page-->
 <table class="table">
     <tr>
-        <th>
-            Customer Names
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Address)
-        </th>
-        <th>
-            Action(Edit)
-        </th>
-        <th>
-            Action(Delete)
-        </th>
+        <!--column titles-->
+        <th>Customer Names</th>
+        <th>Address</th>
+        <th>Action(Edit)</th>
+        <th>Action(Delete)</th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Address)
-        </td>
-        <td>
-            @*Using Url.Action to create custome url instead of Html.ActionLink,
-                because ActionLink's input text string cannot contain bootstrap glyphicon <span>*@
-            @*btn btn-warning is yellow color*@
-            <a href=@Url.Action("Edit", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-warning">
-                @*bootstrap icon, can also use emoji*@
-                <span class="glyphicon glyphicon-edit"></span> Edit
-            </a>
-        </td>
-        <td>
-            <a href=@Url.Action("Delete", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-danger">
-                <span class="glyphicon glyphicon-trash"></span> Delete
-            </a>
-        </td>
-    </tr>
-}
+    <!-- Index Page Table -->
+    @foreach (var item in Model.DbCustomerSet)
+    {
+        <tr>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.Id)*@
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @*Using Url.Action to create custome url instead of Html.ActionLink,
+                    because ActionLink's input text string cannot contain bootstrap glyphicon <span>*@
+                <!--Use javascript to open the modal, and find it is a better way.27 / 06 / 2018 -->
+                <a href=@Url.Action("Edit", "Customers", new { id = item.Id }) class="btn btn-warning" id="@item.Id">
+                    @*Text of action link, glyphicon-edit is bootstrap icon*@
+                    <span class="glyphicon glyphicon-edit"></span> Edit
+                </a>
+            </td>
+            <td>
+                <a href=@Url.Action("Delete", "Customers", new { id = item.Id }) class="btn btn-danger" id="@item.Id">
+                    <span class="glyphicon glyphicon-trash"></span> Delete
+                </a>
+            </td>
+        </tr>
+    }
 
 </table>
+
+<!--Conclusion-->
+<hr /><hr /><hr />
+<h3>In this page:</h3>
+<p>Bootstrap Theme</p>
+<p>Bootstrap Modal - dialog box/popup window</p>
+<p>Data through</p>
+
+
+@*enum ActionStates is in Models - New Model - ActionStates.cs
+    enum ActionStates : int
+    {
+        Initial = 0,
+        IndexGet = 1,
+        CreateGet = 2,
+        CreatePost = 3,
+        CreateInputInvalid = 4,
+        EditGet = 5,
+        EditPost = 6,
+        EditInputInvalid = 7,
+        DeleteGet = 8,
+        DeletePost = 9
+    }*@
+
+<!--Open Partial webpage "Create", modal webpage for Creat is in this partial view-->
+<!--Also pass customer data (datatype: Customer customer) to this partial view-->
+@{
+    @*ActionState: CreatePost EditPost DeletePost are not used*@
+    //Creat Modal Page
+    if (Model.ActionState == 2 || Model.ActionState == 4)
+    {
+        Html.RenderPartial("Create", Model.TransferExtraCustomer);
+    }
+    else
+    {
+        Html.RenderPartial("Create", new OnBoardingTask2018Jun.Models.New_Models.Customer { Name = "", Address = "" });
+    }
+
+    //Edit Modal Page
+    if (Model.ActionState == 5 || Model.ActionState == 7)
+    {
+        Html.RenderPartial("Edit", Model.TransferExtraCustomer);
+    }
+    else
+    {
+        Html.RenderPartial("Edit", new OnBoardingTask2018Jun.Models.New_Models.Customer { Name = "", Address = "" });
+    }
+
+    //Delete Modal Page
+    if (Model.ActionState == 8)
+    {
+        Html.RenderPartial("Delete", Model.TransferExtraCustomer);
+    }
+    else
+    {
+        Html.RenderPartial("Delete", new OnBoardingTask2018Jun.Models.New_Models.Customer { Name = "", Address = "" });
+    }
+}
+
+@section Scripts
+{
+    @* (1)Open #CreatModal partial webpage when Create Get
+        (2)Reopen #CreatModal partial webpage when receive a invalid customer value return*@
+    @if (Model.ActionState == 2 || Model.ActionState == 4)
+    {
+        <script>
+            $('#CreateModal').modal({ backdrop: 'static' });
+        </script>
+    }
+
+    @* Open #EditModal partial webpage when Edit Get
+        Reopen #EditModal partial webpage when receive a invalid customer value return*@
+    @if (Model.ActionState == 5 || Model.ActionState == 7)
+    {
+        <script>
+            $('#EditModal').modal({ backdrop: 'static' });
+        </script>
+    }
+
+    @* Open #DeleteModal partial webpage when Delete Get*@
+    @if (Model.ActionState == 8)
+    {
+        <script>
+            $('#DeleteModal').modal({ backdrop: 'static' });
+        </script>
+    }
+}
+
+
+
+<script>
+    // all script function below are not used
+    function CreateClick()
+    {
+        $('#CreateModal').modal();
+    };
+
+    @* Initial set up values(id or URL, Name, and Address) of Edit modal webpage *@
+    function TransferDataForEdit(itemId, itemName, itemAddress)
+    {
+        $('#EditModal').modal();
+    };
+
+
+    @*Initial set up values (id or URL, Name, and Address) of Delete modal webpage*@
+    function TransferDataForDelete(itemId, itemName, itemAddress)
+    {
+        // when click the Delete button, it copy Name & Address to modal webpage
+        document.getElementById("NameForDelete").innerText = itemName;
+        document.getElementById("AddressForDelete").innerText = itemAddress;
+
+        // 3 ways to change the form action
+        document.getElementById("FormForDelete").setAttribute("action", "/Customers/Delete/" + itemId);
+        //$("#FormForDelete").attr("action", "/Customers/Delete/" + itemId);
+        //document.FormForDelete.action = "/Customers/Delete/" + itemId;
+    };
+</script>
+
+

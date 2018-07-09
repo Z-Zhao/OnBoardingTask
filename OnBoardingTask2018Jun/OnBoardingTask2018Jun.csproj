@@ -169,7 +169,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\New Models\ActionStates.cs" />
     <Compile Include="Models\New Models\Customer.cs" />
+    <Compile Include="Models\New Models\CustomerControllerViewDataTransferModel.cs" />
     <Compile Include="Models\New Models\Product.cs" />
     <Compile Include="Models\New Models\ProductSold.cs" />
     <Compile Include="Models\New Models\Store.cs" />
@@ -282,22 +284,18 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Customers\Create.cshtml" />
     <Content Include="Views\Customers\Delete.cshtml" />
-    <Content Include="Views\Customers\Details.cshtml" />
     <Content Include="Views\Customers\Edit.cshtml" />
     <Content Include="Views\Customers\Index.cshtml" />
     <Content Include="Views\Products\Create.cshtml" />
     <Content Include="Views\Products\Delete.cshtml" />
-    <Content Include="Views\Products\Details.cshtml" />
     <Content Include="Views\Products\Edit.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
     <Content Include="Views\Stores\Create.cshtml" />
     <Content Include="Views\Stores\Delete.cshtml" />
-    <Content Include="Views\Stores\Details.cshtml" />
     <Content Include="Views\Stores\Edit.cshtml" />
     <Content Include="Views\Stores\Index.cshtml" />
     <Content Include="Views\Sales\Create.cshtml" />
     <Content Include="Views\Sales\Delete.cshtml" />
-    <Content Include="Views\Sales\Details.cshtml" />
     <Content Include="Views\Sales\Edit.cshtml" />
     <Content Include="Views\Sales\Index.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />

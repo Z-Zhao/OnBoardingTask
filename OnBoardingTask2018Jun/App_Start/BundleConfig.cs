@@ -25,6 +25,11 @@ namespace OnBoardingTask2018Jun
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            // Bundles Knockout.js
+            bundles.Add(new ScriptBundle("~/bundles/knockout").Include(
+                "~/Scripts/knockout-{version}.js",
+                "~/Scripts/knockout.validation.js"));
         }
     }
 }

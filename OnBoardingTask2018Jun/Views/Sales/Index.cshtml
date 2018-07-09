@@ -1,74 +1,330 @@
-﻿@model IEnumerable<OnBoardingTask2018Jun.Models.New_Models.ProductSold>
-
-@{
+﻿@{
     ViewBag.Title = "Index";
 }
 
+<!--Initial Index Page-->
 <h2>Sales</h2>
-
-<p>
-    @Html.ActionLink("Add New Sales Record", "Create", null, new { @class = "btn btn-primary" })
-</p>
+<p><a class="btn btn-primary">Add New Sales Record</a></p>
+<!--Index page table-->
 <table class="table">
-    <tr>
-        <th>
-            <!--Column text: DateSold-->
-            @Html.DisplayNameFor(model => model.DateSold)
-        </th>
-        <th>
-            <!--Column text: Customer Name-->
-            @Html.DisplayNameFor(model => model.Customer)
-            @Html.DisplayNameFor(model => model.Customer.Name)
-        </th>
-        <th>
-            <!--Column text: Product Name-->
-            @Html.DisplayNameFor(model => model.Product)
-            @Html.DisplayNameFor(model => model.Product.Name)
-        </th>
-        <th>
-            <!--Column text: Store Name-->
-            @Html.DisplayNameFor(model => model.Store)
-            @Html.DisplayNameFor(model => model.Store.Name)
-        </th>
-        <th>
-            Action(Edit)
-        </th>
-        <th>
-            Action(Delete)
-        </th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-    <tr>
-        <td>
-            @*Easy Way: Directly output Datetime string after format...
-            Need Convert.ToDateTime because datatype of item.Datesold is DateTime?, not DateTime*@
-            @*@Convert.ToDateTime(item.DateSold).ToString("dd/MM/yyyy")*@
-            @*Html.DisplayFor() makes it difficult to format the datetime string, if insist using it, must add attribute...
-            [DataType(DataType.Date)] in Model*@
-            @Html.DisplayFor(modelItem => item.DateSold)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Customer.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Store.Name)
-        </td>
-        <td>
-            <a href=@Url.Action("Edit", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-warning">
-                <span class="glyphicon glyphicon-edit"></span> Edit
-            </a>
-        </td>
-        <td>
-            <a href=@Url.Action("Delete", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-danger">
-                <span class="glyphicon glyphicon-trash"></span> Delete
-            </a>
-        </td>
-    </tr>
-    }
-
+    @*Title Row*@
+    <tr><th>DateSold</th> <th>Customer Name</th> <th>Product Name</th> <th>Store Name</th> <th>Action(Edit)</th> <th>Action(Delete)</th></tr>
+    <tbody data-bind="foreach: SalesListAll" id="TableIndexPage">
+        @*{DateSold, CustomerName, ProductName, StoreName, Id} = SaleItem = SalesListAll[i]*@
+        <tr>
+            <td data-bind="text: DateSold"></td>
+            <td data-bind="text: CustomerName"></td>
+            <td data-bind="text: ProductName"></td>
+            <td data-bind="text: StoreName"></td>
+            <td>
+                <a data-bind="attr: {id: Id}" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Edit</a>
+            </td>
+            <td>
+                <a data-bind="attr: {id: Id}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</a>
+            </td>
+        </tr>
+    </tbody> <!--foreach end-->
 </table>
+
+<!--Conclusion-->
+<hr /><hr /><hr />
+<h3>In this page:</h3>
+<p>JScript</p>
+<p>JQuery</p>
+<p>Ajax</p>
+<p>Knockout 2 level data binding</p>
+<p>Knockout data validation: "Date" in Edit & Create </p>
+
+
+<!--Monitoring Variables-->
+@*<div>
+        <p>Data In modal:</p>
+        <p>--Sale ID:</p> <p data-bind="text : SoldId"></p>
+        <p>--CustomerId:</p> <p data-bind="text : SelectedCustomerId"></p>
+        <p>--ProductId:</p> <p data-bind="text : SelectedProductId"></p>
+        <p>--StoreId:</p> <p data-bind="text : SelectedStoreId"></p>
+        <p>--DateSold:</p> <p data-bind="text : SoldDate"></p>
+    </div>*@
+
+@*Render Partial Modals*@
+@{
+    Html.RenderPartial("Create");
+    Html.RenderPartial("Edit");
+    Html.RenderPartial("Delete");
+}
+
+@*Must include knockout/validation before viewmodel function*@
+<script src="/Scripts/knockout-3.4.2.js"></script>
+<script src="/Scripts/knockout.validation.js"></script>
+
+<script>
+    // this viewmodel section is usually put in a viewomodel.js file
+
+    // ==BEGIN====ViewModel Object / Function======
+    function SalesViewModel() {
+        // self.xxx is ViewModelHandel.xxx when referred outside SalesViewModel function
+        // see ViewModel Data Binding section
+        var self = this;
+
+        // ------Begin------Initialize Observable objects------
+        // Index Table Array [{Id, CustomerName, StoreName...}]
+        self.SalesListAll = ko.observableArray();
+        // Delete Modal Data Object {Id, CustomerName, StoreName...}
+        self.DeleteData = ko.observable();
+        // Initial Values For Create & Edit Modal ------
+        // simplified from http://jsfiddle.net/Beban/336/
+        // initial data for Edit modal
+        self.SoldId = ko.observable(); // Id of sale records
+        self.SoldDate = ko.observable("0000-00-00");
+        self.SelectedProductId = ko.observable(); // selected value (.ProductId) of Product dropdown list
+        self.SelectedCustomerId = ko.observable();
+        self.SelectedStoreId = ko.observable();
+        self.ProductList = ko.observableArray([]); // options for Product dropdown list
+        self.CustomerList = ko.observableArray([]);
+        self.StoreList = ko.observableArray([]);
+        // Using each variable up above (SoldId,Date,eachIds,eachLists),...
+        // instead of whold object self.ModalData(receiveData) then using data-bind = "with" in front-end...
+        // because data-bind object result in 1 level data-binding, changing select option (e.g. Product select)...
+        // on webpage does not return value to JScript Object property (e.g. ModalData.ProductId).
+        // self.ModalData = ko.observable();
+        // ------End------
+
+        // ------Begin------Index Table Function------
+        // IndexTable Function Get Json(Sales.ToList()) from IndexTable Action, Then ...
+        // Initialize / Renew Index Page Table by Changing self.SalesListAll
+        function IndexTable() {
+            $.ajax({
+                url: "/Sales/IndexTable",
+                type: "get",
+                datatype: "json",
+                success: function (SalesToList) { // return from controller
+                    // make sure property names {Id, CustomerName, StoreName...}
+                    // of SalesListAll data-bind and SalesToList are the same
+                    self.SalesListAll(SalesToList);
+                },
+                error: function () {
+                    alert("IndexTable Get Request Failed");
+                }
+            });
+        }
+        // Index Table When Open Index Page
+        $(document).ready(IndexTable);
+        // ------End------
+
+        // ------Begin------Delete Get------
+        // Click a Delete button on Index page
+        $('#TableIndexPage').delegate(".btn-danger", "click", function () {
+            var DeleteBtnId = this.id;
+            $('#DeleteModal').modal('show');
+            $.ajax({
+                url: "/Sales/Delete/" + DeleteBtnId,
+                type: "get",
+                datatype: "json",
+                success: function (receiveDeleteData) {
+                    // make sure property names {Id, CustomerName, StoreName...}
+                    // of DeleteData data-bind and receiveDeleteData are the same
+                    self.DeleteData(receiveDeleteData);
+                },
+                error: function () {
+                    alert("Delete Get Request Failed");
+                }
+            });
+        });
+        // ------End------
+
+        // ------Begin------Delete Post------
+        // Click a Delete button on Delete Modal
+        $('#DeleteSave').click(function () {
+            var DeleteObject = self.DeleteData();
+            // error when using self.DeleteData().Id
+            $.ajax({
+                url: "/Sales/Delete/" + DeleteObject.Id,
+                type: "post",
+                datatype: "json",
+                data: {
+                    __RequestVerificationToken: $('#DeleteModal').find('[name=__RequestVerificationToken]').val(),
+                    Id: DeleteObject.Id
+                },
+                success: function (receiveData) {
+                    if (receiveData.Id < 0) { // delete successful
+                        $('#DeleteModal').modal('hide');
+                        IndexTable(); // using functon to renew Index Table
+                    }
+                    else {
+                        // delete not successful
+                        //
+                    }
+                },
+                error: function () {
+                    alert("Delete Get Request Failed");
+                }
+            });
+        });
+        // ------End------
+
+
+        // ------Begin------Edit Get (Click Edit Button on Index Page)------
+        $('#TableIndexPage').delegate(".btn-warning", "click", function () {
+            var EditBtnId = this.id;
+            $('#EditModal').modal('show');
+            $.ajax({
+                url: "/Sales/Edit/" + EditBtnId,
+                type: "get",
+                datatype: "json",
+                success: function (receiveData) {
+                    self.ProductList(receiveData.ProductList);
+                    self.CustomerList(receiveData.CustomerList);
+                    self.StoreList(receiveData.StoreList);
+                    self.SoldId(receiveData.Id);
+                    self.SelectedProductId(receiveData.ProductId);
+                    self.SelectedCustomerId(receiveData.CustomerId);
+                    self.SelectedStoreId(receiveData.StoreId);
+                    self.SoldDate(receiveData.DateSold);
+                    //self.ModalData(receiveData);
+                },
+                error: function () {
+                    //alert("Edit Get Request Failed");
+                }
+            });
+        });
+        // ------End------
+
+        // ------Begin------Edit Post (Click Save Button on Edit Modal)------
+        $('#EditSave').click(function () {
+            //alert(self.SoldId());
+            $.ajax({
+                url: "/Sales/Edit/" + self.SoldId(),
+                type: "post",
+                datatype: "json",
+                // data received by controller action: [Bind(Include = "Id,ProductId,CustomerId,StoreId,DateSold")
+                data: {
+                    __RequestVerificationToken: $('#EditModal').find('[name=__RequestVerificationToken]').val(),
+                    Id: self.SoldId(),
+                    ProductId: self.SelectedProductId(),
+                    CustomerId: self.SelectedCustomerId(),
+                    StoreId: self.SelectedStoreId(),
+                    DateSold: self.SoldDate()
+                },
+                success: function (receiveData) {
+                    if (receiveData.Id < 0) {
+                        // Controller Action  successful, return receiveData = {Id = -1}
+                        $('#EditModal').modal('hide');
+                        IndexTable(); // using functon to renew Index Table
+                    }
+                    else {
+                        alert('Invalid data, please check your input.');
+                        // original input data is invalid, refused by ModelState.IsValid
+                        // data validation message
+                    }
+                },
+                error: function () {
+                    //alert("Edit Post Request Failed");
+                }
+            });
+        });
+        // ------End------
+
+
+        // ------Begin------Create Get (Click Create Button on Index Page)------
+        $('.btn-primary').click(function () {
+            $('#CreateModal').modal('show');
+            $.ajax({
+                url: "/Sales/Create/",
+                type: "get",
+                datatype: "json",
+                success: function (receiveData) {
+                    self.ProductList(receiveData.ProductList);
+                    self.CustomerList(receiveData.CustomerList);
+                    self.StoreList(receiveData.StoreList);
+                    self.SoldId(null);
+                    self.SoldDate(receiveData.DateSold);
+                    self.SelectedProductId(receiveData.ProductId);
+                    self.SelectedCustomerId(receiveData.CustomerId);
+                    self.SelectedStoreId(receiveData.StoreId);
+                    //self.ModalData(receiveData);
+                },
+                error: function () {
+                    //alert("Create Get Request Failed");
+                }
+            });
+        });
+        // ------End------
+
+        // ------Begin------Create Post (Click Create Button on Create Modal)------
+        $('#CreateSave').click(function () {
+            $.ajax({
+                url: "/Sales/Create/",
+                type: "post",
+                datatype: "json",
+                // data received by controller action: [Bind(Include = "Id,ProductId,CustomerId,StoreId,DateSold")
+                data: {
+                    __RequestVerificationToken: $('#CreateModal').find('[name=__RequestVerificationToken]').val(),
+                    // Id : null, // do not include Id, because Controller will bind an Id value to received data
+                    ProductId: self.SelectedProductId(),
+                    CustomerId: self.SelectedCustomerId(),
+                    StoreId: self.SelectedStoreId(),
+                    DateSold: self.SoldDate()
+                },
+                success: function (receiveData) {
+                    if (receiveData.Id < 0) {
+                        // Controller Action  successful, return receiveData = {Id = -1}
+                        $('#CreateModal').modal('hide');
+                        IndexTable(); // using functon to renew Index Table
+                    }
+                    else {
+                        alert('Invalid data, please check your input.');
+                        // original input data is invalid, refused by ModelState.IsValid
+                        // data validation message
+                    }
+                },
+                error: function () {
+                    //alert("Edit Post Request Failed");
+                }
+            });
+        });
+        // ------End------
+
+        // ------Begin------KO Validation------
+        // configuration of ko validation, according to https://github.com/Knockout-Contrib/Knockout-Validation/wiki/Configuration  
+        // and http://www.cnblogs.com/liuzhendong/p/3597233.html (ko.validation.configure in this webpage)
+        ko.validation.init({
+            decorateElement: false,
+            registerExtenders: true,
+            messagesOnModified: true,
+            insertMessages: false, //Default true
+            parseInputAttributes: true,
+            messageTemplate: null,
+            errorClass: 'error'
+        });
+        // validation for SoldDate in Create and Edit Modal
+        self.SoldDate.extend({
+            validation: {
+                validator: function (inputDate) {
+                    //"yyyy-MM-dd"
+                    inputDay = inputDate.slice(8, 10);
+                    inputMonth = inputDate.slice(5, 7);
+                    inputYear = inputDate.slice(0, 4);
+                    var now = new Date;
+                    var NowDateUTC = Date.UTC(now.getFullYear(), (now.getMonth() + 1), now.getDate());
+                    var InputDateUTC = Date.UTC(inputYear, inputMonth, inputDay);
+                    if (InputDateUTC <= NowDateUTC) {
+                        return true;// valid
+                    }
+                    else {
+                        return false; // future date, invalid
+                    }
+                },
+                message: 'Sale date should be today or before today.' // data-bind="validationMessage:SoldDate"
+            }
+        });
+        // ------End------
+    }
+    // ==E N D==== ViewModel Object / Function ======
+
+    // ==BEGIN==== ViewModel Data Binding ======
+    // apply Knockout data binding to this View Model function
+    var ViewModelHandel = new SalesViewModel();
+    ko.applyBindings(ViewModelHandel);
+    // ==E N D==== ViewModel Data Binding ======
+
+</script>

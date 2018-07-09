@@ -1,49 +1,231 @@
-﻿@model IEnumerable<OnBoardingTask2018Jun.Models.New_Models.Store>
+﻿<!--jquery.validate.min.js should include BEFORE unobstrusive-->
+<!--To use Ajax <form data-ajax-url...> in Edit, Create and Delete modal, should include unobstrusive.min.js-->
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 
 @{
     ViewBag.Title = "Index";
 }
-
+<!--Initial Index Page-->
 <h2>Stores</h2>
-
 <p>
-    @Html.ActionLink("Add New Store", "Create",null,new { @class= "btn btn-primary" })
+    <!--Create Button-->
+    <a class="btn btn-primary">Add New Store</a>
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Address)
-        </th>
-        <th>
-            Action(Edit)
-        </th>
-        <th>
-            Action(Delete)
-        </th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Address)
-        </td>
-        <td>
-            <a href=@Url.Action("Edit", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-warning">
-                <span class="glyphicon glyphicon-edit"></span> Edit
-            </a>
-        </td>
-        <td>
-            <a href=@Url.Action("Delete", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-danger">
-                <span class="glyphicon glyphicon-trash"></span> Delete
-            </a>
-        </td>
-    </tr>
+<!--Index Page Table-->
+<!--Table will be produced by ajax url: stores/IndexTable in the view Index.cshtml-->
+<div id="TableIndexPage"></div>
+
+<!--Conclusion-->
+<hr /><hr /><hr />
+<h3>In this page:</h3>
+<p>1. Json - All data transfer actions through Frontend and Controller are return Json</p>
+<p>2. Ajax - create dynamic html (Modal, Table)</p>
+<p>3. JQuery - select DOM and events</p>
+<p>4. Data validation is through Controller according to Model (back-end)</p>
+
+
+<!--Include Edit modal, id: EidtModal-->
+<!--Include Delete modal, id: DeleteModal-->
+@{
+    Html.RenderPartial("Create");
+    Html.RenderPartial("Edit");
+    Html.RenderPartial("Delete");
 }
+<script>
+    // Index - IndexTable: Get Json(Stores.ToList())
+    $(document).ready(function () {
+        $.ajax({
+            url: "/Stores/IndexTable", // write"/"at the front of url, otherwise it might be /Controllername/Stores/IndexTable, i.e. Stores/Stores/IndexTable
+            type: "get",
+            datatype: "json",
+            success: ProduceIndexTableHtml, // only function name, do not attach parameter
+            error: function () {
+                alert("IndexTable Get Request Failed");
+            }
+        })
+    })
+    // Index - function in which produce the html for Table according to input parameter,
+    // then insert html to < div id = "TableIndexPage" ></div >
+    function ProduceIndexTableHtml(StoresToList) {
+        var TableHtml = "<table class=\"table\">";
+        TableHtml += "<tr><th>Name</th><th>Address</th><th>Action(Edit)</th><th>Action(Delete)</th></tr>"; // title row
+        for (var i = 0; i < StoresToList.length; i++) { // for each data row (have not found foreach in JScript)
+            TableHtml += "<tr>";
+            TableHtml += "<td>" + StoresToList[i].Name + "</td>";
+            TableHtml += "<td>" + StoresToList[i].Address + "</td>";
+            TableHtml += "<td><button class=\"btn btn-warning\" id=\"" + StoresToList[i].Id + "\"><span class=\"glyphicon glyphicon-edit\"></span> Edit</button></td>";
+            TableHtml += "<td><button class=\"btn btn-danger\" id=\"" + StoresToList[i].Id + "\"><span class=\"glyphicon glyphicon-trash\"></span> Delete</button></td>";
+            TableHtml += "</tr>";
+        }
+        TableHtml += "</table>";
+        $("#TableIndexPage").html(TableHtml);
+    }
 
-</table>
+    // Create - Click Create button on Index Page:
+    // Process:
+    // (1)  clean Store Name, Address, Id, and Validation values (to default condition)
+    // (2)  open CreateModal
+    $(".btn-primary").click(function () {
+        $("#CreateName").val("");
+        $("#CreateAddress").val("");
+        $("#CreateNameValidMsg").text('');
+        $("#CreateAddrValidMsg").text('');
+        // open Create modal
+        $("#CreateModal").modal();
+    })
+
+    // Create - Click Create button on Create Modal
+    //  Json is successful, but data itself may be valid or not valid (e.g. Name is null)
+    //      Valid: hide modal, renew table using ajax
+    //      InValid: keep modal show, show validation message (do not need if front end validation open)
+    $('#CreateSave').click(function () {
+        $.ajax({
+            url: "/Stores/Create/",
+            type: "post",
+            datatype: "json",
+            data: $('#CreateForm').serialize(),
+            success: function (StoreAndValid) {
+                if (StoreAndValid.DataValid) {// valid
+                    $.ajax({
+                        url: "/Stores/IndexTable",
+                        type: "get",
+                        datatype: "json",
+                        success: ProduceIndexTableHtml,
+                        error: function () {
+                            alert("IndexTable Get Request Failed");
+                        }
+                    });
+                    $("#CreateModal").modal('hide');
+                }
+                else { // not valid (Name is empty)
+                    // if open front end validation, this part is not used
+                    $("#CreateModal").modal('show');
+                    $("#CreateNameValidMsg").text($("#CreateName").attr('data-val-required'));
+                }
+            },
+            error: function () { }
+        })
+    })
+
+    // Edit - Click one Edit button on Index Page:
+    // Process:
+    // (1)  Ajax to Edit Get,
+    // (2)  If success, Insert Store Name & Address to Modal, then open EditModal
+    // Note:
+    // (1)  Reason for using.delegate: http://www.w3school.com.cn/jquery/event_delegate.asp
+    //      instead of normal way of JQuery ($('.btn-warning').click(function () {...)
+    //      for html object created by ajax after $(document).ready(), i.e.the table in this page
+    $('#TableIndexPage').delegate(".btn-warning", "click", function () {
+        var EditBtnId = this.id;
+        $.ajax({
+            url: "/Stores/Edit/" + EditBtnId,
+            type: "get",
+            datatype: "json",
+            success: function (ReturnResultFromEditGet) {
+                //$("#EditForm").attr('data-ajax-url', '/Stores/Edit/' + EditBtnId)
+                //    .attr('action', '/Stores/Edit/' + EditBtnId);
+                $("#EditId").val(EditBtnId); // always use instead of attr('value',xxx)
+                $("#EditName").val(ReturnResultFromEditGet.Name);
+                $("#EditAddress").val(ReturnResultFromEditGet.Address);
+                // setting span text of EditNameValidMessage and EditAddrValidMsg
+                $("#EditNameValidMsg").text('');
+                $("#EditAddrValidMsg").text('');
+                //$("#EditNameValidMsg").text($("#EditName").attr('data-val-required'));
+                // open edit modal
+                $("#EditModal").modal();
+            },
+            error: function () {
+                alert("Request Failed");
+            }
+        })
+    })
+
+    // Edit - Click Save button on Edit Modal
+    //  Json is successful, but data itself may be valid or not valid (e.g. Name is null)
+    //      Valid: hide modal, renew table using ajax
+    //      InValid: keep modal show, show validation message (do not need if front end validation open)
+    $('#EditSave').click(function () {
+        $.ajax({
+            url: "/Stores/Edit/" + $('#EditId').val(),
+            type: "post",
+            datatype: "json",
+            data: $('#EditForm').serialize(),
+            success: function (StoreAndValid) {
+                if (StoreAndValid.DataValid) {// valid
+                    $.ajax({
+                        url: "/Stores/IndexTable", // write"/"at the front of url, otherwise it might be /Controllername/Stores/IndexTable, i.e. Stores/Stores/IndexTable
+                        type: "get",
+                        datatype: "json",
+                        success: ProduceIndexTableHtml, // only function name, do not attach parameter
+                        error: function () {
+                            alert("IndexTable Get Request Failed");
+                        }
+                    });
+                    $("#EditModal").modal('hide');
+                }
+                else { // not valid (Name is empty)
+                    // if open front end validation, this part is not used
+                    $("#EditModal").modal('show');
+                    $("#EditNameValidMsg").text($("#EditName").attr('data-val-required'));
+                }
+            },
+            error: function () { }
+        })
+    })
+
+    // Delete - Click one Delete button on Index Page:
+    // (1)  Ajax to Get Delete,
+    // (2)  If success, Insert Store Name & Address to <div>, give value to <input name="Id"/>
+    // (3)  open DeleteModal
+    $('#TableIndexPage').delegate(".btn-danger", "click", function () {
+        var DeleteBtnId = this.id;
+        $.ajax({
+            url: "/Stores/Delete/" + DeleteBtnId,
+            type: "get",
+            datatype: "json",
+            success: function (ReturnResultFromDeleteGet) {
+                var InsertHtml = "<dt>Name</dt>";
+                InsertHtml += "<dd>" + ReturnResultFromDeleteGet.Name + "</dd>";
+                InsertHtml += "<dt>Address</dt>";
+                InsertHtml += "<dd>" + ReturnResultFromDeleteGet.Address + "</dd>";
+                $("#DisplayDeleteData").html(InsertHtml);
+                // give value to <input name="Id">  inside form
+                $("#DeleteId").val(DeleteBtnId);
+                // open delete modal
+                $("#DeleteModal").modal();
+            },
+            error: function () {
+                alert("Request Failed");
+            }
+        })
+    })
+
+    // Delete - Click Delete button on Delete Modal
+    $('#DeleteSave').click(function () {
+        $.ajax({
+            url: "/Stores/Delete/" + $('#DeleteId').val(),
+            type: "post",
+            datatype: "json",
+            data: $('#DeleteForm').serialize(),
+            success: function (DeleteValid) {
+                if (DeleteValid) {// controller only return true
+                    $.ajax({
+                        url: "/Stores/IndexTable",
+                        type: "get",
+                        datatype: "json",
+                        success: ProduceIndexTableHtml, // only function name, do not attach parameter
+                        error: function () {
+                            alert("IndexTable Get Request Failed");
+                        }
+                    });
+                    $("#DeleteModal").modal('hide');
+                }
+                else {
+                }
+            },
+            error: function () { }
+        })
+    })
+</script>

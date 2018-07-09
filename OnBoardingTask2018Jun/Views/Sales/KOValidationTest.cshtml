@@ -1,0 +1,102 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style type="text/css">
+        .error {
+            border: 2px solid red;
+        }
+
+        input {
+            border: 1px solid #AAA;
+            padding: 4px;
+        }
+    </style>
+</head>
+<body>
+    <input id="txtFirstName" type="text" data-bind="value:firstName, validationElement: firstName" /><br />
+    <input id="txtLastName" type="text" data-bind="value:lastName, validationElement: lastName" /><br />
+    <input id="txtScore" type="text" data-bind="value:score, validationElement: score" /><br />
+    <button id="btn" data-bind="click:SubmitClick">btn</button>
+    <br /><br />
+    <!--显示错误提示信息 start-->
+    <font color="red">
+        <b>
+            <span data-bind="validationMessage: firstName"></span>
+            <span data-bind="validationMessage: lastName"></span>
+            <span data-bind="validationMessage: score"></span>
+        </b>
+    </font>
+    <!--显示错误提示信息 end-->
+</body>
+</html>
+
+@*<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="/Scripts/knockout-3.4.2.js"></script>
+<script src="/Scripts/knockout.validation.js"></script>*@
+
+<script>
+    require.config({
+        paths: {
+            "knockout": "~/Scripts/knockout-3.4.2.js",
+            "jquery": "~/Scripts/jquery-3.3.1.min.js",
+            "knockvalidation": "~/Scripts/knockout.validation.js"
+        }
+    });
+
+    require(['knockout', 'jquery', 'knockvalidation'], function (ko, $, kovalidation) {
+        //数据绑定
+        ko.validation.configure({
+            decorateElement: false,
+            registerExtenders: true,
+            messagesOnModified: true,
+            insertMessages: false,
+            parseInputAttributes: true,
+            messageTemplate: null,
+            errorClass: 'error'
+        });
+
+        var viewModel = {
+            firstName: ko.observable().extend({ required: { message: '请输入firstName' } }),
+            lastName: ko.observable().extend({ required: { message: '请输入lastName' } }).extend({ minLength: 2, maxLength: 10 }),
+            score: ko.observable().extend({
+                validation: {
+                    validator: function (val, someOtherVal) {
+                        if (val != null && val.length >= someOtherVal) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    },
+                    message: '最少要输入6位数字',
+                    params: 6
+                }
+            }),
+            SubmitClick: function () {
+                if (viewModel.errors().length == 0) {
+                    //可以提交数据了.
+                    alert("ok");
+                    return true;
+                } else {
+                    alert("fail");
+                    viewModel.errors.showAllMessages();
+                    return false;
+                }
+            }
+        };
+
+        viewModel.errors = ko.validation.group(viewModel);
+
+        $(document).ready(function () {
+            ko.applyBindings(viewModel);
+        });
+    });
+    
+
+    
+</script>
