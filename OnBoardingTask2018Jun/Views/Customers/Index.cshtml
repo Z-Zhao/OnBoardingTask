@@ -1,0 +1,53 @@
+﻿@model IEnumerable<OnBoardingTask2018Jun.Models.New_Models.Customer>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Customer Details</h2>
+
+<p>
+    @Html.ActionLink("Add New Customer", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Customer Names
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th>
+            Action(Edit)
+        </th>
+        <th>
+            Action(Delete)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        <td>
+            @*Using Url.Action to create custome url instead of Html.ActionLink,
+                because ActionLink's input text string cannot contain bootstrap glyphicon <span>*@
+            @*btn btn-warning is yellow color*@
+            <a href=@Url.Action("Edit", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-warning">
+                @*bootstrap icon, can also use emoji*@
+                <span class="glyphicon glyphicon-edit"></span> Edit
+            </a>
+        </td>
+        <td>
+            <a href=@Url.Action("Delete", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-danger">
+                <span class="glyphicon glyphicon-trash"></span> Delete
+            </a>
+        </td>
+    </tr>
+}
+
+</table>

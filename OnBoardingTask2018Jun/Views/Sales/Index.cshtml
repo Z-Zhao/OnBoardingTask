@@ -1,0 +1,74 @@
+﻿@model IEnumerable<OnBoardingTask2018Jun.Models.New_Models.ProductSold>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Sales</h2>
+
+<p>
+    @Html.ActionLink("Add New Sales Record", "Create", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            <!--Column text: DateSold-->
+            @Html.DisplayNameFor(model => model.DateSold)
+        </th>
+        <th>
+            <!--Column text: Customer Name-->
+            @Html.DisplayNameFor(model => model.Customer)
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </th>
+        <th>
+            <!--Column text: Product Name-->
+            @Html.DisplayNameFor(model => model.Product)
+            @Html.DisplayNameFor(model => model.Product.Name)
+        </th>
+        <th>
+            <!--Column text: Store Name-->
+            @Html.DisplayNameFor(model => model.Store)
+            @Html.DisplayNameFor(model => model.Store.Name)
+        </th>
+        <th>
+            Action(Edit)
+        </th>
+        <th>
+            Action(Delete)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>
+            @*Easy Way: Directly output Datetime string after format...
+            Need Convert.ToDateTime because datatype of item.Datesold is DateTime?, not DateTime*@
+            @*@Convert.ToDateTime(item.DateSold).ToString("dd/MM/yyyy")*@
+            @*Html.DisplayFor() makes it difficult to format the datetime string, if insist using it, must add attribute...
+            [DataType(DataType.Date)] in Model*@
+            @Html.DisplayFor(modelItem => item.DateSold)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Product.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Store.Name)
+        </td>
+        <td>
+            <a href=@Url.Action("Edit", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-warning">
+                <span class="glyphicon glyphicon-edit"></span> Edit
+            </a>
+        </td>
+        <td>
+            <a href=@Url.Action("Delete", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-danger">
+                <span class="glyphicon glyphicon-trash"></span> Delete
+            </a>
+        </td>
+    </tr>
+    }
+
+</table>

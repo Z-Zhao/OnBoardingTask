@@ -1,0 +1,49 @@
+﻿@model IEnumerable<OnBoardingTask2018Jun.Models.New_Models.Store>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Stores</h2>
+
+<p>
+    @Html.ActionLink("Add New Store", "Create",null,new { @class= "btn btn-primary" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th>
+            Action(Edit)
+        </th>
+        <th>
+            Action(Delete)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        <td>
+            <a href=@Url.Action("Edit", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-warning">
+                <span class="glyphicon glyphicon-edit"></span> Edit
+            </a>
+        </td>
+        <td>
+            <a href=@Url.Action("Delete", this.ViewContext.RouteData.Values["controller"].ToString(), new { id = item.Id }) class="btn btn-danger">
+                <span class="glyphicon glyphicon-trash"></span> Delete
+            </a>
+        </td>
+    </tr>
+}
+
+</table>
