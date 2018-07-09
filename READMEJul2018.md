@@ -21,6 +21,21 @@ Instructions:
    
 Technical summary:   
 Note: X - technic used   
+           | Name:|Product|Customer| Store | Sale |
+           | ---: |-----: |------: |-----: |----: |
+         | ASP.NET|   X   |    X   |   X   |  X   |
+             | MVC|   X   |    X   |   X   |  X   |
+            | MVVM|       |        |       |  X   |
+| Entity Framework|   X   |    X   |   X   |  X   |
+ | Data annotation|   X   |    X   |   X   |  X   |
+            | CRUD|   X   |    X   |   X   |  X   |
+       | Bootstrap|       |    X   |   X   |  X   |
+         | JScript|       |    X   |   X   |  X   |
+          | jQuery|       |    X   |   X   |  X   |
+| @Model pass data|   X   |    X   |       |      |
+       | AJAX/Json|       |        |   X   |  X   |
+        | Knockout|       |        |       |  X   |
+   
            Name:|Product|Customer| Store | Sale   
            -----------------------------------   
          ASP.NET|   X   |    X   |   X   |  X   
