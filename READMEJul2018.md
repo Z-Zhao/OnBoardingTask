@@ -17,7 +17,7 @@ Instructions:
 •	The Sale page has 3 drop down lists that have the customers, stores and products in and an input for the date the sale occurred (must be current date or previous date)   
 •	Apply Knockout data-binding & Knockout frontend validation (KO data-binding:Sale, KO validation: sold date)   
 •	Upload this finished project to GitHub   
-•	Publish this project and database in Azure and publish   
+•	Publish this project in Azure   
    
 Entity Framework data model diagram:   
 ![](https://github.com/Z-Zhao/OnBoardingTask2018Jun/raw/master/Data%20Model%20Diagram.jpg)
