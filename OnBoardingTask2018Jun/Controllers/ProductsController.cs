@@ -48,7 +48,7 @@ namespace OnBoardingTask2018Jun.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Price")] Product product)
-        {
+        {// data validation according to Model data annotation
             if (ModelState.IsValid)
             {
                 db.Products.Add(product);
@@ -80,7 +80,7 @@ namespace OnBoardingTask2018Jun.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Price")] Product product)
-        {
+        {// data validation according to Model data annotation
             if (ModelState.IsValid)
             {
                 db.Entry(product).State = EntityState.Modified;

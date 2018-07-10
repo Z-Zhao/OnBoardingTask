@@ -18,6 +18,7 @@ namespace OnBoardingTask2018Jun.Models.New_Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        [Required]
         public string Address { get; set; }
 
         // Constructor

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-
+// this is for customer data pass @model transfer state.
+// looking for more definition in CustomerController
 namespace OnBoardingTask2018Jun.Models.New_Models
 {
     public enum ActionStates : int

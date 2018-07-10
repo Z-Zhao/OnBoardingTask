@@ -44,7 +44,7 @@ namespace OnBoardingTask2018Jun.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Address")] Store store)
-        {
+        {// data validation according to Model data annotation 
             if (ModelState.IsValid)
             { // data is valid
                 db.Stores.Add(store);
@@ -53,7 +53,14 @@ namespace OnBoardingTask2018Jun.Controllers
             }
             else
             { // data is not valid
-                return Json(new { Store = new { store.Id, store.Name, store.Address }, DataValid = false }, JsonRequestBehavior.AllowGet);
+                // Veryfy validation of each key 
+                var ValidType = new
+                {
+                    IdValid = ModelState.IsValidField("Id"),
+                    NameValid = ModelState.IsValidField("Name"),
+                    AddressValid = ModelState.IsValidField("Address")
+                };
+                return Json(new { Store = new { store.Id, store.Name, store.Address }, DataValid = false, ValidType }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -91,10 +98,15 @@ namespace OnBoardingTask2018Jun.Controllers
                 //return RedirectToAction("Index");
             }
             else // data is not valid
-            {
+            {   // Veryfy validation of each key 
+                var ValidType = new {
+                    IdValid = ModelState.IsValidField("Id"),
+                    NameValid = ModelState.IsValidField("Name"),
+                    AddressValid = ModelState.IsValidField("Address")
+                };
                 // return only property which frontend needed, aviod ProductSolds,
                 // otherwise it will cause circle reference
-                return Json(new { Store= new { store.Id,store.Name,store.Address },DataValid=false }, JsonRequestBehavior.AllowGet);
+                return Json(new { Store= new { store.Id,store.Name,store.Address },DataValid=false, ValidType }, JsonRequestBehavior.AllowGet);
                 //return View(store); // return this not valid data to original edit view
             }
             

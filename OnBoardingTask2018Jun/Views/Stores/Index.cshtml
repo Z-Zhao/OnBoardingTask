@@ -87,6 +87,7 @@
             datatype: "json",
             data: $('#CreateForm').serialize(),
             success: function (StoreAndValid) {
+                // receive Model backend validation result: .Datavalid
                 if (StoreAndValid.DataValid) {// valid
                     $.ajax({
                         url: "/Stores/IndexTable",
@@ -99,10 +100,27 @@
                     });
                     $("#CreateModal").modal('hide');
                 }
-                else { // not valid (Name is empty)
-                    // if open front end validation, this part is not used
+                else { // not valid (Name is empty or String is empty)
+                    
+                    // if using front end validation, this part is not used
+                    // Modal stay open
                     $("#CreateModal").modal('show');
-                    $("#CreateNameValidMsg").text($("#CreateName").attr('data-val-required'));
+                    // validation message control
+                    if (StoreAndValid.ValidType.NameValid) {
+                        $("#CreateNameValidMsg").text("");
+                    }
+                    else {
+                        $("#CreateNameValidMsg").text($("#CreateName").attr('data-val-required'));
+                    }
+                    if (StoreAndValid.ValidType.AddressValid) {
+                        $("#CreateAddrValidMsg").text("");
+                    }
+                    else{
+                        $("#CreateAddrValidMsg").text($("#CreateAddress").attr('data-val-required'));
+                    }
+                    if (StoreAndValid.ValidType.IdValid == false) {
+                        /* empty */
+                    }
                 }
             },
             error: function () { }
@@ -165,13 +183,29 @@
                     });
                     $("#EditModal").modal('hide');
                 }
-                else { // not valid (Name is empty)
+                else { // not valid (Name is empty or String is empty)
                     // if open front end validation, this part is not used
+                    // Modal stay open
                     $("#EditModal").modal('show');
-                    $("#EditNameValidMsg").text($("#EditName").attr('data-val-required'));
+                    // validation message control
+                    if (StoreAndValid.ValidType.NameValid) { //Name is valid
+                        $("#EditNameValidMsg").text("");
+                    }
+                    else {//Name is not valid
+                        $("#EditNameValidMsg").text($("#EditName").attr('data-val-required'));
+                    }
+                    if (StoreAndValid.ValidType.AddressValid) { //Address is valid
+                        $("#EditAddrValidMsg").text("");
+                    }
+                    else {//Address is not valid
+                        $("#EditAddrValidMsg").text($("#EditAddress").attr('data-val-required'));
+                    }
+                    if (StoreAndValid.ValidType.IdValid == false) {
+                        /* empty */
+                    }
                 }
             },
-            error: function () { }
+            error: function () { /*alert('Edit post failed');*/}
         })
     })
 

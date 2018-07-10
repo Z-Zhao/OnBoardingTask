@@ -44,7 +44,7 @@ namespace OnBoardingTask2018Jun.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken] // Avoid CSRF: Cross Site Request Forgery
         public ActionResult Create([Bind(Include = "Id,Name,Address")] Customer customer)
-        {
+        {// data validation according to Model data annotation
             if (ModelState.IsValid)
             {
                 db.Customers.Add(customer);
@@ -110,7 +110,7 @@ namespace OnBoardingTask2018Jun.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Address")] Customer customer)
-        {
+        {// data validation according to Model data annotation
             if (ModelState.IsValid)
             {
                 db.Entry(customer).State = EntityState.Modified;
