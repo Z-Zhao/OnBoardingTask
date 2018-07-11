@@ -9,11 +9,11 @@
 *@
 @*In this Customers SPA, I try to use default ASP.NET MVC data trasfer method rather than AJAX/Json*@
 @* This data passing method need transfer whole webpage every time, thus it is much heavier than AJAX/JSON.
-   Herb Zhao, 24/06/2018
+    Herb Zhao, 24/06/2018
 *@
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Customer";
 }
 
 <h2>Customer Details</h2>
@@ -84,7 +84,8 @@
         EditPost = 6,
         EditInputInvalid = 7,
         DeleteGet = 8,
-        DeletePost = 9
+        DeletePost = 9,
+        DeleteGetFKConstraint = 10
     }*@
 
 <!--Open Partial webpage "Create", modal webpage for Creat is in this partial view-->
@@ -112,7 +113,7 @@
     }
 
     //Delete Modal Page
-    if (Model.ActionState == 8)
+    if (Model.ActionState == 8 || Model.ActionState == 10)
     {
         Html.RenderPartial("Delete", Model.TransferExtraCustomer);
     }
@@ -147,6 +148,14 @@
     {
         <script>
             $('#DeleteModal').modal({ backdrop: 'static' });
+        </script>
+    }
+
+    @if (Model.ActionState == 10)
+    {
+        <script>
+            $('#DeleteModal').modal();
+            alert('This record can not be deleted successfully because it is used in Sales records.');
         </script>
     }
 }

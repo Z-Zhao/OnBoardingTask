@@ -111,9 +111,17 @@ namespace OnBoardingTask2018Jun.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Product product = db.Products.Find(id);
-            db.Products.Remove(product);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (product.ProductSolds.Count == 0)
+            {
+                db.Products.Remove(product);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else // Conflict because of Foreign Key relationship
+            {
+                return View("ErrorDeleteFKConflict");
+            }
+
         }
 
         protected override void Dispose(bool disposing)

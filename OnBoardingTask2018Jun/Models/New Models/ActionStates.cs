@@ -17,6 +17,9 @@ namespace OnBoardingTask2018Jun.Models.New_Models
         EditPost = 6,
         EditInputInvalid = 7,
         DeleteGet = 8,
-        DeletePost = 9
+        DeletePost = 9,
+        // Delete Get Foreign Key Constraint
+        // Customer is used in ProductSold recods, thus it can not be deleted
+        DeleteGetFKConstraint = 10
     }
 }

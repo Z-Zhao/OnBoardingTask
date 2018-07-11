@@ -146,9 +146,17 @@ namespace OnBoardingTask2018Jun.Controllers
                 {
                     CustomerControllerViewDataTransferModel ReturnToIndex = new CustomerControllerViewDataTransferModel();
                     ReturnToIndex.DbCustomerSet = db.Customers.ToList();
-                    ReturnToIndex.ActionState = (int)ActionStates.DeleteGet;
                     ReturnToIndex.TransferExtraCustomer = customer;
-
+                    if (customer.ProductSolds.Count == 0)
+                    {
+                        ReturnToIndex.ActionState = (int)ActionStates.DeleteGet;
+                    }
+                    else
+                    {   // Count > 0, Delete Get Foreign Key Constraint:
+                        // Customer is used in ProductSold recods, thus it can not be deleted
+                        ReturnToIndex.ActionState = (int)ActionStates.DeleteGetFKConstraint;
+                    }
+                    
                     // different ways of View V.S. Openning Modal analysis: see comment in GET: Customers/Edit/5
                     return View("Index", ReturnToIndex);
                 }
@@ -161,9 +169,17 @@ namespace OnBoardingTask2018Jun.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Customer customer = db.Customers.Find(id);
-            db.Customers.Remove(customer);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (customer.ProductSolds.Count == 0)
+            {
+                db.Customers.Remove(customer);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else // Conflict because of Foreign Key relationship
+            {
+                return View("ErrorDeleteFKConflict");
+            }
+            
         }
 
         protected override void Dispose(bool disposing)

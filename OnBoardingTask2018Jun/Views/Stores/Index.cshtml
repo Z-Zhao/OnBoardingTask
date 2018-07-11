@@ -4,7 +4,7 @@
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Store";
 }
 <!--Initial Index Page-->
 <h2>Stores</h2>
@@ -229,6 +229,7 @@
                 $("#DeleteId").val(DeleteBtnId);
                 // open delete modal
                 $("#DeleteModal").modal();
+                
             },
             error: function () {
                 alert("Request Failed");
@@ -244,7 +245,7 @@
             datatype: "json",
             data: $('#DeleteForm').serialize(),
             success: function (DeleteValid) {
-                if (DeleteValid) {// controller only return true
+                if (DeleteValid.Success) {// controller return true - no FK conflict
                     $.ajax({
                         url: "/Stores/IndexTable",
                         type: "get",
@@ -256,10 +257,14 @@
                     });
                     $("#DeleteModal").modal('hide');
                 }
-                else {
+                else { // controller return true - FK conflict
+                    $("#DeleteModal").modal('show');
+                    alert('This record can not be deleted successfully because it is used in Sales records.')
                 }
             },
-            error: function () { }
+            error: function () {
+                alert('Delete Post request failed.');
+            }
         })
     })
 </script>

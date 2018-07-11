@@ -135,9 +135,18 @@ namespace OnBoardingTask2018Jun.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Store store = db.Stores.Find(id);
-            db.Stores.Remove(store);
-            db.SaveChanges();
-            return Json(new { Success=true }); // return success info to ajax post
+            if (store.ProductSolds.Count == 0) // store not used in productsolds
+            {
+                db.Stores.Remove(store);
+                db.SaveChanges();
+                return Json(new { Success = true }); // return success info to ajax post
+            }
+            else // store used in productsolds, can not be deleted because of foreign key constraint
+            {
+                return Json(new { Success = false });
+                // return failed info to ajax post
+            }
+            
         }
 
         protected override void Dispose(bool disposing)
