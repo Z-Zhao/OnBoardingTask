@@ -257,7 +257,7 @@
                     });
                     $("#DeleteModal").modal('hide');
                 }
-                else { // controller return true - FK conflict
+                else { // controller return false - FK conflict
                     $("#DeleteModal").modal('show');
                     alert('This record can not be deleted successfully because it is used in Sales records.')
                 }
