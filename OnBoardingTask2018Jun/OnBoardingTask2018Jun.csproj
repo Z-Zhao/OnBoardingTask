@@ -170,6 +170,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CashiersController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
@@ -179,6 +180,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\New Models\ActionStates.cs" />
+    <Compile Include="Models\New Models\Cashier.cs" />
     <Compile Include="Models\New Models\Customer.cs" />
     <Compile Include="Models\New Models\CustomerControllerViewDataTransferModel.cs" />
     <Compile Include="Models\New Models\Product.cs" />
@@ -320,6 +322,11 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Scripts\knockout.validation.min.js.map" />
     <Content Include="Views\Shared\ErrorDeleteFKConflict.cshtml" />
+    <Content Include="Views\Cashiers\Create.cshtml" />
+    <Content Include="Views\Cashiers\Delete.cshtml" />
+    <Content Include="Views\Cashiers\Details.cshtml" />
+    <Content Include="Views\Cashiers\Edit.cshtml" />
+    <Content Include="Views\Cashiers\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

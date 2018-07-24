@@ -1,15 +1,12 @@
-﻿// modify Namespace to new place
-
+﻿// Created by Herb on 19-06-2018
+// Modified by Herb on 23-07-2018
 namespace OnBoardingTask2018Jun.Models.New_Models
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-
-    // define instance of database (entity framework)
-    // can modify default name to other names.
-    // in this case, the new name is CustomChangedEntities
+    // rename the entity 
     public partial class CustomChangedEntities : DbContext
     {
         public CustomChangedEntities()
@@ -26,5 +23,6 @@ namespace OnBoardingTask2018Jun.Models.New_Models
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductSold> ProductSolds { get; set; }
         public virtual DbSet<Store> Stores { get; set; }
+        public virtual DbSet<Cashier> Cashiers { get; set; }
     }
 }

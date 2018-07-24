@@ -4,13 +4,21 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="OnboardTaskModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="OnboardTaskModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Cashier">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="DateOfBirth" Type="date" />
+        </EntityType>
         <EntityType Name="Customer">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="256" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="Address" Type="nvarchar" MaxLength="256" />
         </EntityType>
         <EntityType Name="Product">
@@ -18,7 +26,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="256" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="Price" Type="money" />
         </EntityType>
         <EntityType Name="ProductSold">
@@ -30,15 +38,28 @@
           <Property Name="CustomerId" Type="int" Nullable="false" />
           <Property Name="StoreId" Type="int" Nullable="false" />
           <Property Name="DateSold" Type="date" />
+          <Property Name="CashierId" Type="int" />
         </EntityType>
         <EntityType Name="Store">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="256" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="Address" Type="nvarchar" MaxLength="256" />
         </EntityType>
+        <Association Name="FK_ProductSold_Cashier">
+          <End Role="Cashier" Type="Self.Cashier" Multiplicity="0..1" />
+          <End Role="ProductSold" Type="Self.ProductSold" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cashier">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductSold">
+              <PropertyRef Name="CashierId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ProductSold_Customer">
           <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
           <End Role="ProductSold" Type="Self.ProductSold" Multiplicity="*" />
@@ -76,10 +97,15 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="OnboardTaskModelStoreContainer">
+          <EntitySet Name="Cashier" EntityType="Self.Cashier" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Customer" EntityType="Self.Customer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Product" EntityType="Self.Product" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductSold" EntityType="Self.ProductSold" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Store" EntityType="Self.Store" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ProductSold_Cashier" Association="Self.FK_ProductSold_Cashier">
+            <End Role="Cashier" EntitySet="Cashier" />
+            <End Role="ProductSold" EntitySet="ProductSold" />
+          </AssociationSet>
           <AssociationSet Name="FK_ProductSold_Customer" Association="Self.FK_ProductSold_Customer">
             <End Role="Customer" EntitySet="Customer" />
             <End Role="ProductSold" EntitySet="ProductSold" />
@@ -93,8 +119,7 @@
             <End Role="ProductSold" EntitySet="ProductSold" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="OnboardTaskModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -103,7 +128,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Address" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ProductSolds" Relationship="Self.FK_ProductSold_Customer" FromRole="Customer" ToRole="ProductSold" />
         </EntityType>
@@ -112,7 +137,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Price" Type="Decimal" Precision="19" Scale="4" />
           <NavigationProperty Name="ProductSolds" Relationship="Self.FK_ProductSold_Product" FromRole="Product" ToRole="ProductSold" />
         </EntityType>
@@ -128,13 +153,15 @@
           <NavigationProperty Name="Customer" Relationship="Self.FK_ProductSold_Customer" FromRole="ProductSold" ToRole="Customer" />
           <NavigationProperty Name="Product" Relationship="Self.FK_ProductSold_Product" FromRole="ProductSold" ToRole="Product" />
           <NavigationProperty Name="Store" Relationship="Self.FK_ProductSold_Store" FromRole="ProductSold" ToRole="Store" />
+          <Property Name="CashierId" Type="Int32" />
+          <NavigationProperty Name="Cashier" Relationship="OnboardTaskModel.FK_ProductSold_Cashier" FromRole="ProductSold" ToRole="Cashier" />
         </EntityType>
         <EntityType Name="Store">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Address" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ProductSolds" Relationship="Self.FK_ProductSold_Store" FromRole="Store" ToRole="ProductSold" />
         </EntityType>
@@ -191,7 +218,33 @@
             <End Role="Store" EntitySet="Stores" />
             <End Role="ProductSold" EntitySet="ProductSolds" />
           </AssociationSet>
+          <EntitySet Name="Cashiers" EntityType="OnboardTaskModel.Cashier" />
+          <AssociationSet Name="FK_ProductSold_Cashier" Association="OnboardTaskModel.FK_ProductSold_Cashier">
+            <End Role="Cashier" EntitySet="Cashiers" />
+            <End Role="ProductSold" EntitySet="ProductSolds" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Cashier">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="DateOfBirth" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="ProductSolds" Relationship="OnboardTaskModel.FK_ProductSold_Cashier" FromRole="Cashier" ToRole="ProductSold" />
+        </EntityType>
+        <Association Name="FK_ProductSold_Cashier">
+          <End Type="OnboardTaskModel.Cashier" Role="Cashier" Multiplicity="0..1" />
+          <End Type="OnboardTaskModel.ProductSold" Role="ProductSold" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cashier">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductSold">
+              <PropertyRef Name="CashierId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -219,6 +272,7 @@
           <EntitySetMapping Name="ProductSolds">
             <EntityTypeMapping TypeName="OnboardTaskModel.ProductSold">
               <MappingFragment StoreEntitySet="ProductSold">
+                <ScalarProperty Name="CashierId" ColumnName="CashierId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
@@ -233,6 +287,15 @@
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cashiers">
+            <EntityTypeMapping TypeName="OnboardTaskModel.Cashier">
+              <MappingFragment StoreEntitySet="Cashier">
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

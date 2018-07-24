@@ -6,6 +6,7 @@ using System.Web;
 // Manually Created by Herb on 19-06-2018
 // According to auto-generated class in Entity Framework
 // Data Annotation and Validation Implemented.
+// Updated on 23-07-2018, Add cashier and cashierId
 
 namespace OnBoardingTask2018Jun.Models.New_Models
 {
@@ -19,6 +20,8 @@ namespace OnBoardingTask2018Jun.Models.New_Models
         public int CustomerId { get; set; }
         [Required]
         public int StoreId { get; set; }
+        [Required]
+        public int CashierId { get; set; }
 
         [DataType(DataType.Date)] 
         // format datetime to dd/MM/yyyy (without dafault format followed by hh/mm/ss)
@@ -29,6 +32,7 @@ namespace OnBoardingTask2018Jun.Models.New_Models
         public virtual Customer Customer { get; set; }
         public virtual Product Product { get; set; }
         public virtual Store Store { get; set; }
+        public virtual Cashier Cashier { get; set; }
 
         // Property Validation
         public IEnumerable<ValidationResult> Validate(ValidationContext ValiCotext)

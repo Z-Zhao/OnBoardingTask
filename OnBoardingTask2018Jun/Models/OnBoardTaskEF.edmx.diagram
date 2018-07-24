@@ -12,6 +12,8 @@
         <AssociationConnector Association="OnboardTaskModel.FK_ProductSold_Customer" ManuallyRouted="false" />
         <AssociationConnector Association="OnboardTaskModel.FK_ProductSold_Product" ManuallyRouted="false" />
         <AssociationConnector Association="OnboardTaskModel.FK_ProductSold_Store" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="OnboardTaskModel.Cashier" Width="1.5" PointX="3.375" PointY="4.875" />
+        <AssociationConnector Association="OnboardTaskModel.FK_ProductSold_Cashier" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

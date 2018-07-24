@@ -12,7 +12,7 @@
 
                     <div class="form-horizontal">
                         <div class="validation-summary-errors text-danger"><ul><li style="display:none"></li></ul></div> @*ValidationSummary*@
-                        
+
                         <div class="form-group">
                             <!--Customer-->
                             <label class="control-label col-md-2" for="CustomerId">Customer Name</label>
@@ -43,11 +43,19 @@
                         </div>
 
                         <div class="form-group">
+                            <!--Cashier-->
+                            <label class="control-label col-md-2" for="StoreId">Cashier Name</label>
+                            <div class="col-md-10">
+                                <select data-bind="options: CashierList, value: SelectedCashierId, optionsText: 'Name', optionsValue: 'Id'" class="form-control" id="CashierId" name="CashierId"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <!--Sold Date-->
                             <label class="control-label col-md-2" for="DateSold">Date</label>
                             <div class="col-md-10">
                                 <input data-bind="value:SoldDate, validationElement:SoldDate" type="date" class="form-control text-box single-line" data-val="true" data-val-date="The field DateSold must be a date." id="DateSold" name="DateSold" />
-                                <span data-bind="validationMessage:SoldDate" class = "text-danger"></span> <!--Knockout validation, SoldDate can not be a future date (bigger than today).-->
+                                <span data-bind="validationMessage:SoldDate" class="text-danger"></span> <!--Knockout validation, SoldDate can not be a future date (bigger than today).-->
                             </div>
                         </div>
                         <div class="form-group">

@@ -45,6 +45,13 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="control-label col-md-2" for="CashierId">Cashier Name</label>
+                            <div class="col-md-10">
+                                <select data-bind="options: CashierList, value: SelectedCashierId, optionsText: 'Name', optionsValue: 'Id'" class="form-control" id="CashierId" name="CashierId"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="control-label col-md-2" for="DateSold">Date</label>
                             <div class="col-md-10">
                                 @*displayed date format will be chosen based on the set locale of the user's browser, whereas the <input> date value is always formatted "yyyy-mm-dd"*@

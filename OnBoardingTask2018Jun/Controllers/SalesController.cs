@@ -25,7 +25,7 @@ namespace OnBoardingTask2018Jun.Controllers
         public ActionResult IndexTable()
         {
             // datatype: List<{ DateSold, Customer, Product, Store, Id, ProductId, CustomerId, StoreId}>
-            var productSolds = db.ProductSolds.Include(p => p.Customer).Include(p => p.Product).Include(p => p.Store).ToList();
+            var productSolds = db.ProductSolds.Include(p => p.Customer).Include(p => p.Product).Include(p => p.Store).Include(p=>p.Cashier).ToList();
             // sellect only needed property, to avoid circle reference when serialization
             var SalesToList = productSolds.Select(item => new {
                 Id = item.Id,
@@ -37,7 +37,8 @@ namespace OnBoardingTask2018Jun.Controllers
                 DateSold = Convert.ToDateTime(item.DateSold).ToString("dd/MM/yyyy"), // send date string dd/MM/yyyy
                 CustomerName = item.Customer.Name,
                 ProductName = item.Product.Name,
-                StoreName = item.Store.Name
+                StoreName = item.Store.Name,
+                CashierName = item.Cashier.Name
             });
             // datatype: List<{ Id, DateSold, CustomerName, ProductName, StoreName}>
             return Json(SalesToList.ToList(), JsonRequestBehavior.AllowGet);
@@ -49,18 +50,25 @@ namespace OnBoardingTask2018Jun.Controllers
             var CustomerList = db.Customers.Select(item => new { item.Id, item.Name, item.Address });
             var ProductList = db.Products.Select(item => new { item.Id, item.Name, item.Price });
             var StoreList = db.Stores.Select(item => new { item.Id, item.Name, item.Address });
+            var CashierList = db.Cashiers.Select(item => new { item.Id, item.Name, item.DateOfBirth });
 
             return Json(
                 new
                 {
+                    // Id, will be changed when saved to database
                     Id = 0,
+                    // Initial value of select lists
                     CustomerId = CustomerList.First().Id,
                     ProductId = ProductList.First().Id,
                     StoreId = StoreList.First().Id,
+                    CashierId = CashierList.First().Id,
+                    // sold date
                     DateSold = DateTime.Now.ToString("yyyy-MM-dd"),
-                    CustomerList = db.Customers.Select(item => new { item.Id, item.Name, item.Address }),
-                    ProductList = db.Products.Select(item => new { item.Id, item.Name, item.Price }),
-                    StoreList = db.Stores.Select(item => new { item.Id, item.Name, item.Address })
+                    // List selections
+                    CustomerList,
+                    ProductList,
+                    StoreList,
+                    CashierList
                 },JsonRequestBehavior.AllowGet);
         }
 
@@ -69,7 +77,7 @@ namespace OnBoardingTask2018Jun.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ProductId,CustomerId,StoreId,DateSold")] ProductSold productSold)
+        public ActionResult Create([Bind(Include = "Id,ProductId,CustomerId,StoreId,CashierId,DateSold")] ProductSold productSold)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +93,7 @@ namespace OnBoardingTask2018Jun.Controllers
                 );
             }
             else
-            {
+            { // If ModelState is not valid (e.g. required values missing, return original inputed data value to the view)
                 return Json(
                     new
                     {
@@ -93,10 +101,12 @@ namespace OnBoardingTask2018Jun.Controllers
                         CustomerId = productSold.CustomerId,
                         ProductId = productSold.ProductId,
                         StoreId = productSold.StoreId,
+                        CashierId = productSold.CashierId,
                         DateSold = productSold.DateSold,
                         CustomerList = db.Customers.Select(item => new { item.Id, item.Name, item.Address }),
                         ProductList = db.Products.Select(item => new { item.Id, item.Name, item.Price }),
-                        StoreList = db.Stores.Select(item => new { item.Id, item.Name, item.Address })
+                        StoreList = db.Stores.Select(item => new { item.Id, item.Name, item.Address }),
+                        CashierList=db.Cashiers.Select(item=>new { item.Id, item.Name, item.DateOfBirth })
                     }, JsonRequestBehavior.AllowGet
                 );
             }
@@ -122,10 +132,12 @@ namespace OnBoardingTask2018Jun.Controllers
                     CustomerId = productSold.CustomerId,
                     ProductId = productSold.ProductId,
                     StoreId = productSold.StoreId,
+                    CashierId = productSold.CashierId,
                     DateSold = Convert.ToDateTime(productSold.DateSold).ToString("yyyy-MM-dd"),
                     CustomerList = db.Customers.Select(item => new { item.Id, item.Name, item.Address }),
                     ProductList = db.Products.Select(item => new { item.Id, item.Name, item.Price }),
-                    StoreList = db.Stores.Select(item => new { item.Id, item.Name, item.Address })
+                    StoreList = db.Stores.Select(item => new { item.Id, item.Name, item.Address }),
+                    CashierList = db.Cashiers.Select(item => new { item.Id, item.Name, item.DateOfBirth })
                 },JsonRequestBehavior.AllowGet
             );
         }
@@ -135,18 +147,13 @@ namespace OnBoardingTask2018Jun.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ProductId,CustomerId,StoreId,DateSold")] ProductSold productSold)
+        public ActionResult Edit([Bind(Include = "Id,ProductId,CustomerId,StoreId,CashierId,DateSold")] ProductSold productSold)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(productSold).State = EntityState.Modified;
                 db.SaveChanges();
-                return Json(
-                    new
-                    {
-                        Id=-1
-                    }, JsonRequestBehavior.AllowGet
-                );
+                return Json( new { Id=-1 }, JsonRequestBehavior.AllowGet );
             }
             else    // ModelState.IsValid is false
             {   // did not save the data to database
@@ -157,10 +164,12 @@ namespace OnBoardingTask2018Jun.Controllers
                         CustomerId = productSold.CustomerId,
                         ProductId = productSold.ProductId,
                         StoreId = productSold.StoreId,
+                        CashierId = productSold.CashierId,
                         DateSold = productSold.DateSold,
                         CustomerList = db.Customers.Select(item => new { item.Id, item.Name, item.Address }),
                         ProductList = db.Products.Select(item => new { item.Id, item.Name, item.Price }),
-                        StoreList = db.Stores.Select(item => new { item.Id, item.Name, item.Address })
+                        StoreList = db.Stores.Select(item => new { item.Id, item.Name, item.Address }),
+                        CashierList = db.Cashiers.Select(item => new { item.Id, item.Name, item.DateOfBirth })
                     }, JsonRequestBehavior.AllowGet
                 );
             }
@@ -187,7 +196,8 @@ namespace OnBoardingTask2018Jun.Controllers
                     DateSold = Convert.ToDateTime(productSold.DateSold).ToString("dd/MM/yyyy"),
                     CustomerName = productSold.Customer.Name,
                     ProductName = productSold.Product.Name,
-                    StoreName = productSold.Store.Name
+                    StoreName = productSold.Store.Name,
+                    CashierName = productSold.Cashier.Name
                 };
                 return Json(returnProductSold, JsonRequestBehavior.AllowGet);
             }

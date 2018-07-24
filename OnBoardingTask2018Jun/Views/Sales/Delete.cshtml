@@ -12,14 +12,22 @@
                 <div>
                     <h4>ProductSold</h4>
                     <hr />
-                    <dl class="dl-horizontal" data-bind="with: DeleteData"> @*data-bind with: binding object DeleteData*@
-                        <dt>Date Sold</dt>      <dd data-bind="text: DateSold"></dd> @*DeleteData.DateSold*@
+                    <dl class="dl-horizontal" data-bind="with: DeleteData">
+                        @*data-bind with: binding object DeleteData*@
+                        <dt>Date Sold</dt>
+                        <dd data-bind="text: DateSold"></dd> @*DeleteData.DateSold*@
 
-                        <dt>Customer Name</dt>  <dd data-bind="text: CustomerName"></dd>
+                        <dt>Customer Name</dt>
+                        <dd data-bind="text: CustomerName"></dd>
 
-                        <dt>Product Name</dt>   <dd data-bind="text: ProductName"></dd>
+                        <dt>Product Name</dt>
+                        <dd data-bind="text: ProductName"></dd>
 
-                        <dt>Store Name</dt>     <dd data-bind="text: StoreName"></dd>
+                        <dt>Store Name</dt>
+                        <dd data-bind="text: StoreName"></dd>
+
+                        <dt>Cashier Name</dt>
+                        <dd data-bind="text: CashierName"></dd>
                     </dl>
 
                     @using (Html.BeginForm())

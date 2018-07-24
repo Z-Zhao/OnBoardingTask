@@ -8,7 +8,15 @@
 <!--Index page table-->
 <table class="table">
     @*Title Row*@
-    <tr><th>DateSold</th> <th>Customer Name</th> <th>Product Name</th> <th>Store Name</th> <th>Action(Edit)</th> <th>Action(Delete)</th></tr>
+    <tr>
+        <th>DateSold</th> 
+        <th>Customer Name</th>
+        <th>Product Name</th> 
+        <th>Store Name</th> 
+        <th>Cashier Name</th>
+        <th>Action(Edit)</th> 
+        <th>Action(Delete)</th>
+    </tr>
     <tbody data-bind="foreach: SalesListAll" id="TableIndexPage">
         @*{DateSold, CustomerName, ProductName, StoreName, Id} = SaleItem = SalesListAll[i]*@
         <tr>
@@ -16,6 +24,7 @@
             <td data-bind="text: CustomerName"></td>
             <td data-bind="text: ProductName"></td>
             <td data-bind="text: StoreName"></td>
+            <td data-bind="text: CashierName"></td>
             <td>
                 <a data-bind="attr: {id: Id}" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span> Edit</a>
             </td>
@@ -79,9 +88,11 @@
         self.SelectedProductId = ko.observable(); // selected value (.ProductId) of Product dropdown list
         self.SelectedCustomerId = ko.observable();
         self.SelectedStoreId = ko.observable();
+        self.SelectedCashierId = ko.observable();
         self.ProductList = ko.observableArray([]); // options for Product dropdown list
         self.CustomerList = ko.observableArray([]);
         self.StoreList = ko.observableArray([]);
+        self.CashierList = ko.observableArray([]);
         // Using each variable up above (SoldId,Date,eachIds,eachLists),...
         // instead of whold object self.ModalData(receiveData) then using data-bind = "with" in front-end...
         // because data-bind object result in 1 level data-binding, changing select option (e.g. Product select)...
@@ -175,10 +186,12 @@
                     self.ProductList(receiveData.ProductList);
                     self.CustomerList(receiveData.CustomerList);
                     self.StoreList(receiveData.StoreList);
+                    self.CashierList(receiveData.CashierList);
                     self.SoldId(receiveData.Id);
                     self.SelectedProductId(receiveData.ProductId);
                     self.SelectedCustomerId(receiveData.CustomerId);
                     self.SelectedStoreId(receiveData.StoreId);
+                    self.SelectedCashierId(receiveData.CashierId);
                     self.SoldDate(receiveData.DateSold);
                     //self.ModalData(receiveData);
                 },
@@ -203,11 +216,12 @@
                     ProductId: self.SelectedProductId(),
                     CustomerId: self.SelectedCustomerId(),
                     StoreId: self.SelectedStoreId(),
+                    CashierId: self.SelectedCashierId(),
                     DateSold: self.SoldDate()
                 },
                 success: function (receiveData) {
                     if (receiveData.Id < 0) {
-                        // Controller Action  successful, return receiveData = {Id = -1}
+                        // Action successful, Controller return receiveData {Id = -1}
                         $('#EditModal').modal('hide');
                         IndexTable(); // using functon to renew Index Table
                     }
@@ -236,11 +250,13 @@
                     self.ProductList(receiveData.ProductList);
                     self.CustomerList(receiveData.CustomerList);
                     self.StoreList(receiveData.StoreList);
+                    self.CashierList(receiveData.CashierList);
                     self.SoldId(null);
                     self.SoldDate(receiveData.DateSold);
                     self.SelectedProductId(receiveData.ProductId);
                     self.SelectedCustomerId(receiveData.CustomerId);
                     self.SelectedStoreId(receiveData.StoreId);
+                    self.selectedCashierId(receiveData.CashierId)
                     //self.ModalData(receiveData);
                 },
                 error: function () {
@@ -263,6 +279,7 @@
                     ProductId: self.SelectedProductId(),
                     CustomerId: self.SelectedCustomerId(),
                     StoreId: self.SelectedStoreId(),
+                    CashierId: self.SelectedCashierId(),
                     DateSold: self.SoldDate()
                 },
                 success: function (receiveData) {
